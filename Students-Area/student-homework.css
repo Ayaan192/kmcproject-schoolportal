@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #e6f0ff, #f8f9fa);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-header {
+    background: #003087;
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.main-nav {
+    background: #0d1b46;
+    padding: 14px 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 20px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #ffcc00;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+.main-content {
+    flex: 1;
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 30px;
+    width: 100%;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.welcome-section h1 {
+    color: #003087;
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+}
+
+.welcome-section p {
+    color: #555;
+    font-size: 1.15rem;
+}
+
+.homework-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 30px;
+}
+
+.homework-item {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border-left: 6px solid #28a745;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.homework-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.homework-item h3 {
+    color: #003087;
+    margin-bottom: 12px;
+    font-size: 1.6rem;
+}
+
+.due-date {
+    font-weight: 600;
+    color: #c8102e;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.description {
+    margin-bottom: 20px;
+    line-height: 1.7;
+    color: #444;
+}
+
+.homework-images {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.image-wrapper {
+    position: relative;
+    flex: 1 1 200px;
+    max-width: 220px;
+}
+
+.homework-img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.homework-img:hover {
+    transform: scale(1.05);
+}
+
+.view-full {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.view-full:hover {
+    opacity: 1;
+}
+
+.posted {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: #777;
+    font-style: italic;
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .main-nav {
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .homework-list {
+        grid-template-columns: 1fr;
+    }
+
+    .homework-images {
+        flex-direction: column;
+        align-items: center;
+    }
+}

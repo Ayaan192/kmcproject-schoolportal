@@ -1,0 +1,685 @@
+/* --- 1. GLOBAL VARIABLES & RESET --- */
+:root {
+    --side-bg: #f3f3f3;
+    --content-bg: #ffffff;
+    --accent: #003087;       /* KMC Navy Blue */
+    --accent-red: #c8102e;   /* KMC Red */
+    --school-green: #2e7d32;
+    --text-main: #202020;
+    --text-muted: #5f5f5f;
+    --border: #e5e5e5;
+    --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'SF Pro Display', sans-serif;
+}
+
+body {
+    background: var(--side-bg);
+    height: 100vh;
+    overflow: hidden;
+    color: var(--text-main);
+}
+
+/* --- 2. LAYOUT STRUCTURE --- */
+.settings-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* --- 3. SIDEBAR (Windows Style) --- */
+.sidebar {
+    width: 300px;
+    background: var(--side-bg);
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fff;
+    padding: 4px;
+    border: 1px solid var(--border);
+    object-fit: contain;
+}
+
+.user-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.user-info p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.nav-menu {
+    flex-grow: 1;
+}
+
+.nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.nav-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.nav-item.active {
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+}
+
+.nav-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+/* --- 4. MAIN CONTENT AREA --- */
+.content-area {
+    flex-grow: 1;
+    background: var(--content-bg);
+    margin: 10px 10px 10px 0;
+    border-radius: 12px;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.03);
+    padding: 50px 70px;
+    overflow-y: auto;
+}
+
+.tab-header {
+    margin-bottom: 40px;
+}
+
+.tab-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.tab-header p {
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 5. SEARCH & LOAD SECTION --- */
+.search-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border);
+}
+
+.search-section input {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.search-section input:focus {
+    border-color: var(--accent);
+}
+
+#loadBtn {
+    padding: 0 25px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- 6. DIGITAL ID CARD DESIGN --- */
+.id-card-display {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.digital-id {
+    width: 360px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.id-header-top {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+}
+
+.card-logo { width: 50px; }
+
+.id-card-brand {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #333;
+}
+
+.K { color: #003087; }
+.M { color: #c8102e; }
+.C { color: green; }
+.school-text { color: darkblue; margin-left: 4px; font-weight: 600; }
+
+.card-title p { font-size: 0.65rem; color: #666; font-weight: bold; }
+
+.id-mid-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 25px;
+    align-items: flex-end;
+}
+
+#qrcode {
+    padding: 6px;
+    background: #fff;
+    border: 1.5px solid #eee;
+}
+
+.id-subtext {
+    text-align: center;
+    margin-top: 8px;
+}
+
+#idQrCode {
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+#idQrClass {
+    font-size: 0.65rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.photo-section img {
+    width: 100px;
+    height: 125px;
+    border: 2px solid #000;
+    object-fit: cover;
+}
+
+.student-info {
+    padding: 20px 25px;
+}
+
+.student-info h2 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    border-bottom: 2.5px solid #f0f0f0;
+    padding-bottom: 5px;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 85px 1fr;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.id-card-footer {
+    text-align: center;
+}
+
+.validity {
+    font-size: 0.75rem;
+    padding: 10px;
+    font-weight: bold;
+    color: #444;
+}
+
+.red-bottom-bar {
+    height: 14px;
+    background: var(--accent-red);
+}
+
+/* --- 7. SETTINGS FORM --- */
+.settings-form {
+    max-width: 750px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.input-box.full {
+    grid-column: span 2;
+}
+
+.input-box label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.2s;
+}
+
+.input-box input:focus {
+    border-color: var(--accent);
+    outline: none;
+    background: #f0f4ff;
+}
+
+.save-btn {
+    margin-top: 35px;
+    padding: 15px 40px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background: #002261;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,48,135,0.3);
+}
+
+/* --- 8. CONTACT TAB CARDS --- */
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.contact-card {
+    background: #f8f9fa;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: 0.3s;
+}
+
+.contact-card:hover {
+    border-color: var(--accent);
+    background: #fff;
+    transform: translateY(-5px);
+}
+
+.contact-card span {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.contact-card p {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* --- 9. NEW SYSTEM FEATURES (ADD TO END OF FILE) --- */
+
+/* Cloud Status Indicator */
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+#statusDot {
+    height: 10px;
+    width: 10px;
+    background: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #2ecc71;
+    transition: background 0.3s ease;
+}
+
+#statusText {
+    font-size: 0.7rem;
+    color: #2ecc71;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Profile Progress Bar */
+.progress-wrapper {
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.progress-label {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+}
+
+.progress-track {
+    width: 100%;
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+
+#progressBar {
+    width: 0%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Session List Styling */
+.session-log-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    transition: transform 0.2s;
+}
+
+.session-log-item:hover {
+    transform: scale(1.01);
+    border-color: var(--accent);
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.session-device {
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.session-time {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* Download Button Specifics */
+.download-btn {
+    background: var(--school-green);
+    margin-top: 25px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.download-btn:hover {
+    background: #1e5622;
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+}
+
+/* Session Info Warning Box */
+.warning-box {
+    text-align: left;
+    background: #fff5f5;
+    border-left: 4px solid var(--accent-red);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.warning-box p {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.warning-footer {
+    color: var(--accent-red);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+
+/* Sidebar Footer Positioning */
+.sidebar-footer {
+    margin-top: auto; /* Pushes the footer to the bottom of the sidebar */
+    padding-top: 10px;
+}
+
+/* Exit Button Hover Effect */
+.exit-btn:hover {
+    background: #eef2f7 !important;
+    color: var(--accent) !important;
+}
+
+/* Ensure sidebar takes full height for footer placement */
+.sidebar {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#toast {
+    visibility: hidden;
+    min-width: 280px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 16px;
+    position: fixed;
+    /* This MUST be higher than your sidebar and content area */
+    z-index: 99999; 
+    right: 30px;
+    bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    font-weight: 600;
+}
+
+#toast.show {
+    visibility: visible;
+    animation: slideUpFade 0.5s forwards;
+}
+
+@keyframes slideUpFade {
+    from { bottom: 0; opacity: 0; }
+    to { bottom: 30px; opacity: 1; }
+}
+
+/* Media query adjustment for mobile footer */
+@media screen and (max-width: 768px) {
+    .sidebar-footer {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+    }
+    .sidebar-footer hr { display: none; }
+}
+
+/* --- 10. RESPONSIVE MEDIA QUERIES --- */
+
+/* For Tablets and Small Laptops (Max 1024px) */
+@media screen and (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+    
+    .content-area {
+        padding: 40px;
+    }
+
+    .form-grid {
+        gap: 15px;
+    }
+}
+
+/* For Mobile Phones (Max 768px) */
+@media screen and (max-width: 768px) {
+    .settings-container {
+        flex-direction: column; /* Stack sidebar on top of content */
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 15px;
+    }
+
+    .sidebar-header {
+        margin-bottom: 15px;
+    }
+
+    .nav-menu {
+        display: flex;
+        overflow-x: auto; /* Allow horizontal scrolling menu */
+        gap: 10px;
+        padding-bottom: 5px;
+    }
+
+    .nav-item {
+        white-space: nowrap; /* Keep text on one line */
+        width: auto;
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    .nav-divider {
+        display: none; /* Remove divider in horizontal menu */
+    }
+
+    .content-area {
+        margin: 0;
+        border-radius: 0;
+        padding: 20px;
+        overflow-y: visible; /* Let parent container handle scrolling */
+    }
+
+    .tab-header h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Stack form inputs vertically */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-box.full {
+        grid-column: span 1;
+    }
+
+    /* Shrink ID Card for small screens */
+    .digital-id {
+        width: 100%;
+        max-width: 340px;
+        transform: scale(0.9); /* Slight shrink to fit small screens */
+        transform-origin: top center;
+    }
+
+    .id-card-display {
+        padding: 10px 0;
+    }
+
+    .save-btn {
+        width: 100%; /* Full width buttons on mobile */
+    }
+}
+
+/* For Extra Small Phones (Max 480px) */
+@media screen and (max-width: 480px) {
+    .content-area {
+        padding: 15px;
+    }
+
+    .user-info h4 {
+        font-size: 0.85rem;
+    }
+
+    .digital-id {
+        transform: scale(0.8); /* Shrink more for tiny screens */
+    }
+}

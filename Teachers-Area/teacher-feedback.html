@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Teacher - View Feedback</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="teacher-feedback.css">
+
+    
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div class="email">info@kmcschool.edu.np</div>
+                <div class="phone">01-4792016, 4792906, 4790361, 4797111</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="attendence.html" class="nav-item">Attendance</a>
+        <a href="timetable.html" class="nav-item">Timetable</a>
+        <a href="notice.html" class="nav-item">Notice</a>
+        <a href="notice-up.html" class="nav-item">Update Notice</a>
+        <a href="teacher-homework.html" class="nav-item">Update Homework</a>
+        <a href="todo.html" class="nav-item">To do</a>
+        <a href="#" class="nav-item active">Parents Complain</a>
+        <a href="teacher-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="welcome-section">
+            <h1>Parents' & Students' Feedback</h1>
+            <p>View and reply to all submitted concerns and suggestions.</p>
+        </div>
+
+        <section class="feedback-list">
+            <h2>All Feedback</h2>
+            <div id="feedbackContainer">
+                <p>Loading feedback...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function loadAllFeedback() {
+            const container = document.getElementById('feedbackContainer');
+            container.innerHTML = '<p>Loading feedback...</p>';
+
+            db.collection('feedback')
+                .orderBy('submittedAt', 'desc')
+                .onSnapshot(snapshot => {
+                    container.innerHTML = '';
+
+                    if (snapshot.empty) {
+                        container.innerHTML = '<p>No feedback submitted yet.</p>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const id = doc.id;
+                        const submittedDate = data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleString() : 'Unknown';
+                        const repliedDate = data.repliedAt ? new Date(data.repliedAt.toDate()).toLocaleString() : '';
+
+                        const item = document.createElement('div');
+                        item.className = `feedback-item ${data.status === 'resolved' ? 'resolved' : ''}`;
+
+                        item.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p class="submitted">Submitted: ${submittedDate} • Class: ${data.studentClass || 'Unknown'}</p>
+                            <p class="message">${data.message}</p>
+                            ${data.parentName ? `<p><strong>Parent:</strong> ${data.parentName}</p>` : ''}
+                            ${data.contact ? `<p><strong>Contact:</strong> ${data.contact}</p>` : ''}
+                            
+                            ${data.reply ? `
+                                <div class="reply-section">
+                                    <strong>Reply from School:</strong>
+                                    <p>${data.reply}</p>
+                                    ${repliedDate ? `<small>Replied on: ${repliedDate}</small>` : ''}
+                                </div>
+                            ` : '<p class="pending">Status: Pending - No reply yet</p>'}
+
+                            <div class="teacher-actions">
+                                ${data.status !== 'resolved' ? `
+                                    <textarea id="reply-${id}" placeholder="Type your reply here..." rows="4"></textarea>
+                                    <div class="action-buttons">
+                                        <button class="reply-btn" onclick="sendReply('${id}', document.getElementById('reply-${id}').value)">Send Reply</button>
+                                        <button class="resolve-btn" onclick="markResolved('${id}')">Mark as Resolved</button>
+                                    </div>
+                                ` : '<p class="resolved-note">This feedback has been resolved.</p>'}
+                            </div>
+                        `;
+
+                        container.appendChild(item);
+                    });
+                }, error => {
+                    container.innerHTML = '<p>Error loading feedback: ' + error.message + '</p>';
+                });
+        }
+
+        
+        async function sendReply(id, replyText) {
+            if (!replyText.trim()) {
+                alert("Please write a reply.");
+                return;
+            }
+
+            try {
+                await db.collection('feedback').doc(id).update({
+                    reply: replyText.trim(),
+                    repliedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'replied'
+                });
+                alert("Reply sent successfully!");
+            } catch (error) {
+                alert("Error sending reply: " + error.message);
+            }
+        }
+
+        
+        async function markResolved(id) {
+            if (confirm("Mark this feedback as resolved?")) {
+                try {
+                    await db.collection('feedback').doc(id).update({
+                        status: 'resolved',
+                        resolvedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("Feedback marked as resolved.");
+                } catch (error) {
+                    alert("Error: " + error.message);
+                }
+            }
+        }
+
+        
+        loadAllFeedback();
+    </script>
+
+</body>
+</html>

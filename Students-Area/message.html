@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC Portal | Class Chat</title>
+    <link rel="stylesheet" href="message.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-links-center">
+            <a class="nav-item" href="student-dashboard.html">Dashboard</a>
+            <a class="nav-item" href="student-timetable.html">Timetable</a>
+            <a class="nav-item" href="student-notice.html">Notices</a>
+            <a class="nav-item" href="student-homework.html">Homework</a>
+            <a class="nav-item" href="parents-complain.html">Parents Complain</a>
+            <a class="nav-item active" href="message.html">Class Chat</a>
+            </a>
+            <a class="nav-item logout" href="student-login.html" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="messaging-card">
+            <div class="chat-header">
+                <div class="header-left">
+                    <h2><i class="fa-solid fa-users"></i> Class Group Chat</h2>
+                </div>
+                <div id="statusBadge">Checking Session...</div>
+            </div>
+
+            <div id="chatBox"></div>
+
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } 
+           from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+        authDomain: "kmcproject-techersarea.firebaseapp.com",
+        projectId: "kmcproject-techersarea",
+        storageBucket: "kmcproject-techersarea.firebasestorage.app",
+        messagingSenderId: "997910909059",
+        appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+    };
+
+    // 1. Initialize Firebase
+    let db;
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        console.log("Firebase Connected");
+    } catch (error) {
+        document.getElementById('statusBadge').innerText = "Firebase Error!";
+        console.error(error);
+    }
+
+    const messagesCol = collection(db, "group_messages");
+    const BOT_NAME = "KMC AI BOT"; // Must match your bot.py constant
+
+    // 2. Identity Check
+    const userName = localStorage.getItem('studentName') || "Guest Student";
+    const userClass = localStorage.getItem('studentClass') || "No Class";
+    
+    document.getElementById('statusBadge').innerHTML = `<i class="fa-solid fa-circle-check"></i> ${userName}`;
+
+    // 3. Send Message
+    const sendMsg = async () => {
+        const input = document.getElementById('messageInput');
+        const val = input.value.trim();
+        if (val !== "") {
+            try {
+                await addDoc(messagesCol, {
+                    text: val,
+                    sender: userName,
+                    class: userClass,
+                    createdAt: serverTimestamp()
+                });
+                input.value = "";
+            } catch (e) { alert("Error sending: " + e.message); }
+        }
+    };
+
+    document.getElementById('sendBtn').addEventListener('click', sendMsg);
+    document.getElementById('messageInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMsg();
+    });
+
+    // 4. Load Messages with Auto-Scroll & Bot Detection
+    const q = query(messagesCol, orderBy("createdAt", "asc"));
+    onSnapshot(q, (snapshot) => {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML = "";
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const isMe = data.sender === userName;
+            const isBot = data.sender === BOT_NAME; // NEW: Check if sender is the bot
+
+            const time = data.createdAt ? data.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
+
+            const div = document.createElement('div');
+            
+            // NEW: Add 'bot-msg' class if it's the AI so we can color it differently
+            div.className = `msg ${isMe ? 'sent' : 'received'} ${isBot ? 'bot-msg' : ''}`;
+            
+            div.innerHTML = `
+                <span class="msg-info">${data.sender}</span>
+                <div class="msg-text">${data.text}</div>
+                <span class="msg-time">${time}</span>
+            `;
+            chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').onclick = () => {
+        localStorage.clear();
+        window.location.href = 'student-login.html';
+    };
+</script>
+</body>
+</html>

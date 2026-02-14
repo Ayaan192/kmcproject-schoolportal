@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #e6f0ff, #f8f9fa);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-header {
+    background: #003087;
+    color: white;
+    padding: 14px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.main-content.role-selection {
+    flex: 1;
+    text-align: center;
+    padding: 120px 20px 200px;
+}
+
+.role-selection h1 {
+    font-size: 3.4rem;
+    color: #003087;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+.role-selection p {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 80px;
+}
+
+.role-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    flex-wrap: wrap;
+}
+
+.role-btn {
+    display: inline-block;
+    padding: 45px 110px;
+    font-size: 2.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    border-radius: 20px;
+    transition: all 0.35s ease;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    min-width: 320px;
+    text-align: center;
+}
+
+.role-btn.student {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.role-btn.student:hover {
+    background: linear-gradient(135deg, #218838, #1e7e34);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(40,167,69,0.35);
+}
+
+.role-btn.teacher {
+    background: linear-gradient(135deg, #003087, #0044cc);
+}
+
+.role-btn.teacher:hover {
+    background: linear-gradient(135deg, #00205b, #003087);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0,48,135,0.35);
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .role-selection {
+        padding: 80px 15px 160px;
+    }
+
+    .role-selection h1 {
+        font-size: 2.6rem;
+    }
+
+    .role-selection p {
+        font-size: 1.3rem;
+    }
+
+    .role-buttons {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .role-btn {
+        padding: 35px 80px;
+        font-size: 2.2rem;
+    }
+}

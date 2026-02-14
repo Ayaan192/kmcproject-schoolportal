@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Teachers Login</title>
+    <link rel="stylesheet" href="teacher-login.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h2>Teachers Area - Login</h2>
+
+            <form onsubmit="loginCheck(event)">
+                <label for="cls">Select Class</label>
+                <select id="cls" required>
+                    <option value="" disabled selected>-- Choose Class --</option>
+                    <option value="7DG">7 "DG"</option>
+                </select>
+
+                <label for="pwd">Password</label>
+                <input type="password" id="pwd" placeholder="Enter password" required>
+
+                <button type="submit" class="login-btn">LOGIN</button>
+                <div class="error" id="err"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function loginCheck(e) {
+            e.preventDefault();
+            const c = document.getElementById('cls').value;
+            const p = document.getElementById('pwd').value;
+            const m = document.getElementById('err');
+
+            if (c === '7DG' && p === 'KMC7DG') {
+                window.location.href = 'dashboard.html';
+            } else {
+                m.textContent = 'Incorrect password. Please try again.';
+            }
+        }
+    </script>
+
+</body>
+</html>

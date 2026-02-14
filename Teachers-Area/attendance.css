@@ -1,0 +1,319 @@
+/* attendance.css - Fixed & Improved Version */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --kmc-blue-dark: #003087;
+    --nav-bg: #0d1b46;
+    --kmc-blue: #0044cc;
+    --kmc-red: #c8102e;
+    --kmc-yellow: #ffcc00;
+    --kmc-green: #28a745;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    color: #333;
+    line-height: 1.6;
+}
+
+.main-header {
+    background: var(--kmc-blue-dark);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.header-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-img {
+    height: 70px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+}
+
+.kmc {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.school {
+    color: var(--kmc-yellow);
+    font-size: 2rem;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+.main-nav {
+    background: var(--nav-bg);
+    padding: 0.8rem 0;
+    text-align: center;
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 0 1.2rem;
+    padding: 0.6rem 1rem;
+    transition: all 0.25s;
+    border-radius: 6px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255,255,255,0.12);
+    color: var(--kmc-yellow);
+}
+
+.logout {
+    color: #ffcccc !important;
+}
+
+.logout:hover {
+    background: rgba(200,16,46,0.2) !important;
+}
+
+.main-content {
+    max-width: 1300px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+
+.welcome-section {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--card-shadow);
+    border-left: 6px solid var(--kmc-red);
+    text-align: center;
+}
+
+.welcome-section h1 {
+    color: var(--kmc-blue);
+    margin-bottom: 0.8rem;
+}
+
+.attendance-section {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--card-shadow);
+    border-left: 6px solid var(--kmc-red);
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 14px 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.attendance-table th {
+    background: var(--kmc-blue-dark);
+    color: white;
+    font-weight: 600;
+}
+
+.attendance-table td:nth-child(2) {
+    text-align: left;
+    font-weight: 600;
+}
+
+.attendance-table tr:hover {
+    background: #f8fbff;
+}
+
+.mark-all-btn {
+    background: #eef2ff;
+    color: var(--kmc-blue);
+    border: 1px solid var(--kmc-blue);
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.mark-all-btn:hover {
+    background: var(--kmc-blue);
+    color: white;
+}
+
+.form-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, var(--kmc-green) 0%, #218838 100%);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(40,167,69,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(40,167,69,0.35);
+}
+
+.reset-btn {
+    background: white;
+    color: #555;
+    border: 2px solid #ccc;
+    padding: 12px 36px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.reset-btn:hover {
+    background: #f8f9fa;
+    border-color: #aaa;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--card-shadow);
+}
+
+.names-box ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.pills-list li {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.absent-pills li {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Absent Notify Center Improvements */
+#notifyCenter h2 {
+    color: var(--kmc-red);
+    margin-bottom: 1.2rem;
+}
+
+.notify-card {
+    background: #fff5f5;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.notify-card strong {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: var(--kmc-red);
+    font-size: 1.1rem;
+}
+
+.notify-card textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.notify-card button {
+    margin-top: 0.8rem;
+    padding: 8px 18px;
+    background: var(--kmc-red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.notify-card button:hover {
+    background: red;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .contact-info {
+        text-align: center;
+        margin-top: 0.8rem;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .mark-all-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    .attendance-table th, .attendance-table td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Notices</title>
+    <link rel="stylesheet" href="student-notice.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="student-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="student-timetable.html" class="nav-item">Timetable</a>
+        <a href="student-notice.html" class="nav-item active">Notices</a>
+        <a href="student-homework.html" class="nav-item">Homework</a>
+        <a href="parents-complain.html" class="nav-item">Parents Complain</a>
+        <a class="nav-item" href="message.html">Class Chat</a>
+        <a href="student-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="welcome-section">
+            <h1>School & Class Notices</h1>
+            <p>Latest updates and announcements</p>
+        </div>
+
+        <section class="notices-section" id="noticesList">
+            <p>Loading notices...</p>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function loadStudentNotices() {
+            const list = document.getElementById('noticesList');
+            list.innerHTML = '<p>Loading notices...</p>';
+
+            db.collection('notices')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then(snapshot => {
+                    list.innerHTML = '';
+                    if (snapshot.empty) {
+                        list.innerHTML = '<p>No notices available right now.</p>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+
+                        const card = document.createElement('div');
+                        card.className = 'notice-card';
+
+                        card.innerHTML = `
+                            <div class="notice-header">
+                                <span class="notice-date">${data.date || 'No date'}</span>
+                                <span class="notice-tag">${data.tag || 'General'}</span>
+                            </div>
+                            <h2>${data.title}</h2>
+                            <p class="notice-content">${data.content.replace(/\n/g, '<br>')}</p>
+                            <p class="notice-footer">Posted: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'Unknown'}</p>
+                        `;
+
+                        list.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    list.innerHTML = '<p>Error loading notices: ' + error.message + '</p>';
+                });
+        }
+
+        
+        loadStudentNotices();
+    </script>
+
+</body>
+</html>

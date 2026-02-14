@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School – Edit Timetable | Class 7 "DG"</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="timetable.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div>info@kmcschool.edu.np</div>
+                <div>01-4792016, 4792906</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="attendence.html" class="nav-item">Attendance</a>
+        <a href="timetable.html" class="nav-item active">Timetable</a>
+        <a href="notice.html" class="nav-item">Notice</a>
+        <a href="notice-up.html" class="nav-item">Update Notice</a>
+        <a href="teacher-homework.html" class="nav-item">Update Homework</a>
+        <a href="todo.html" class="nav-item">Todo</a>
+        <a href="teacher-feedback.html" class="nav-item">Parents Complain</a>
+        <a href="teacher-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Timetable Manager – Class 7 "DG"</h1>
+            <p>Click any cell to modify</p>
+        </div>
+
+        <section class="timetable-section">
+            <table class="timetable-table" id="timetable">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>1st</th><th>2nd</th><th>3rd</th><th>4th</th><th>5th</th><th>6th</th><th>7th</th><th>8th</th>
+                    </tr>
+                </thead>
+                <tbody id="timetable-body">
+                    <tr>
+                        <td class="day-label">Sunday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Social</td><td contenteditable="true">Computer</td><td contenteditable="true">Maths</td><td contenteditable="true">Nepali</td><td contenteditable="true">Lifeskills</td><td contenteditable="true">Science</td><td contenteditable="true">Eng II</td>
+                    </tr>
+                    <tr>
+                        <td class="day-label">Monday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Newari</td><td contenteditable="true">Maths</td><td contenteditable="true">Arts</td><td contenteditable="true">Nepali</td><td contenteditable="true">Social</td><td contenteditable="true">Science</td><td contenteditable="true">Science</td>
+                    </tr>
+                    <tr>
+                        <td class="day-label">Tuesday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Eng II</td><td contenteditable="true">Music</td><td contenteditable="true">Lifeskill</td><td contenteditable="true">Science</td><td contenteditable="true">Maths</td><td contenteditable="true">Nepali</td><td contenteditable="true">Social</td>
+                    </tr>
+                    <tr>
+                        <td class="day-label">Wednesday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Eng II</td><td contenteditable="true">Dance</td><td contenteditable="true">Scout</td><td contenteditable="true">Maths</td><td contenteditable="true">Science</td><td contenteditable="true">Nepali</td><td contenteditable="true">Social</td>
+                    </tr>
+                    <tr>
+                        <td class="day-label">Thursday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Computer</td><td contenteditable="true">Eng II</td><td contenteditable="true">Maths</td><td contenteditable="true">Literature</td><td contenteditable="true">Games</td><td contenteditable="true">Social</td><td contenteditable="true">Nepali</td>
+                    </tr>
+                    <tr>
+                        <td class="day-label">Friday</td>
+                        <td contenteditable="true">Eng I</td><td contenteditable="true">Maths</td><td contenteditable="true">Eng II</td><td contenteditable="true">Computer</td><td contenteditable="true">Nepali</td><td contenteditable="true">Science</td><td contenteditable="true">Social</td><td contenteditable="true">Drama</td>
+                    </tr>
+                    <tr class="holiday-row">
+                        <td>Saturday</td>
+                        <td colspan="8">HOLIDAY</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sync-container">
+                <button id="saveBtn" class="sync-btn-bottom">
+                    <span class="icon">☁️</span> Change Timetable
+                </button>
+                <p class="last-updated" id="sync-time">Last synced: Not yet synced</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>© KMC School, Buddhanagar, Kathmandu • All rights reserved • 2026</p>
+    </footer>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg...", 
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.addEventListener('load', async () => {
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "timetable_7dg"));
+                if (docSnap.exists()) {
+                    document.getElementById('timetable-body').innerHTML = docSnap.data().tableHTML;
+                    document.getElementById('sync-time').innerText = "Last synced: " + docSnap.data().lastUpdated.toDate().toLocaleString();
+                }
+            } catch (e) { console.log("Default loaded."); }
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const tableBody = document.getElementById('timetable-body').innerHTML;
+            const now = new Date();
+            try {
+                await setDoc(doc(db, "settings", "timetable_7dg"), {
+                    tableHTML: tableBody,
+                    lastUpdated: now
+                });
+                document.getElementById('sync-time').innerText = "Last synced: " + now.toLocaleString();
+                alert("Cloud Sync Successful!");
+            } catch (error) {
+                alert("Sync Error. Check connection.");
+            }
+        });
+    </script>
+</body>
+</html>

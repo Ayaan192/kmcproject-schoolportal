@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School – Resources | Class 7 "DG"</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div class="email">info@kmcschool.edu.np</div>
+                <div class="phone">01-4792016, 4792906, 4790361, 4797111</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="attendence.html" class="nav-item">Attendance</a>
+        <a href="timetable.html" class="nav-item">Timetable</a>
+        <a href="notice.html" class="nav-item">Notice</a>
+        <a href="notice-up.html" class="nav-item">Update Notice</a>
+        <a href="teacher-homework.html" class="nav-item">Update Homework</a>
+        <a href="todo.html" class="nav-item active">To do</a>
+        <a href="teacher-feedback.html" class="nav-item">Parents Complain</a>
+        <a href="teacher-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Todo List</h1>
+            <p>manage materials and reminders here.</p>
+        </div>
+
+        <section class="dashboard-section">
+            <h2 id="formTitle">📤 Add new material or reminder</h2>
+            <div class="assignment-form" id="postForm">
+                <input type="hidden" id="editId">
+                <select id="postType">
+                    <option value="Reminder">Reminder</option>
+                    <option value="Material">Material</option>
+                </select>
+                <input type="text" id="postTitle" placeholder="Title (e.g. Science Chapter 5 Notes)">
+                <textarea id="postDesc" rows="3" placeholder="Enter description"></textarea>
+                <input type="text" id="postLink" placeholder="Paste Link here (Optional)">
+                
+                <div class="form-buttons">
+                    <button class="post-btn" id="btnPost">Add new material/reminder</button>
+                    <button class="post-btn" id="btnCancel" style="display:none; background:#666;">Cancel Edit</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2>📚 Recent Materials & Reminders</h2>
+            <div id="resourceContainer">
+                <p style="text-align: center; color: #888;">Connecting to cloud...</p>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg...YOUR_REAL_KEY_HERE...", // FIX THIS LINE
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const postBtn = document.getElementById('btnPost');
+        const cancelBtn = document.getElementById('btnCancel');
+        const formTitle = document.getElementById('formTitle');
+
+        // Post or Update
+        postBtn.addEventListener('click', async () => {
+            const type = document.getElementById('postType').value;
+            const title = document.getElementById('postTitle').value.trim();
+            const desc = document.getElementById('postDesc').value.trim();
+            const link = document.getElementById('postLink').value.trim();
+            const editId = document.getElementById('editId').value;
+
+            if (!title || !desc) {
+                alert("Please fill in the title and description.");
+                return;
+            }
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, "resources", editId), { type, title, desc, link });
+                } else {
+                    await addDoc(collection(db, "resources"), { 
+                        type, 
+                        title, 
+                        desc, 
+                        link, 
+                        timestamp: new Date() 
+                    });
+                }
+                resetForm();
+            } catch (e) {
+                alert("Error saving: " + e.message);
+            }
+        });
+
+        // Real-time listener
+        const q = query(collection(db, "resources"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const container = document.getElementById('resourceContainer');
+            container.innerHTML = "";
+
+            if (snapshot.empty) {
+                container.innerHTML = "<p style='text-align:center;'>No reminders or materials posted yet.</p>";
+                return;
+            }
+
+            snapshot.forEach((tDoc) => {
+                const data = tDoc.data();
+                const id = tDoc.id;
+                const date = data.timestamp?.toDate().toLocaleDateString() || "No date";
+                const tagClass = data.type === "Reminder" ? "tag-reminder" : "tag-material";
+
+                const card = document.createElement('div');
+                card.className = "resource-card";
+                card.innerHTML = `
+                    <span class="tag ${tagClass}">${data.type}</span>
+                    <small style="float: right; color: #999;">${date}</small>
+                    <h3>${data.title}</h3>
+                    <p>${data.desc}</p>
+                    ${data.link ? `<a href="${data.link}" target="_blank" class="resource-link">🔗 View Resource</a>` : ''}
+                    <div class="card-actions">
+                        <button class="edit-btn" onclick="prepareEdit('${id}', '${data.type}', '${data.title.replace(/'/g, "\\'")}', '${data.desc.replace(/'/g, "\\'")}', '${data.link || ''}')">✏️ Edit</button>
+                        <button class="delete-btn" onclick="deleteResource('${id}')">🗑️ Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        });
+
+        // Delete
+        window.deleteResource = async (id) => {
+            if (confirm("Delete this reminder/material forever?")) {
+                await deleteDoc(doc(db, "resources", id));
+            }
+        };
+
+        // Prepare edit
+        window.prepareEdit = (id, type, title, desc, link) => {
+            document.getElementById('editId').value = id;
+            document.getElementById('postType').value = type;
+            document.getElementById('postTitle').value = title;
+            document.getElementById('postDesc').value = desc;
+            document.getElementById('postLink').value = link || '';
+            formTitle.innerText = "✏️ Editing " + type;
+            postBtn.innerText = "Save Changes";
+            cancelBtn.style.display = "inline-block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Reset form
+        window.resetForm = () => {
+            document.getElementById('editId').value = "";
+            document.getElementById('postTitle').value = "";
+            document.getElementById('postDesc').value = "";
+            document.getElementById('postLink').value = "";
+            formTitle.innerText = "📤 Add new material or reminder";
+            postBtn.innerText = "Add new material or reminder";
+            cancelBtn.style.display = "none";
+        };
+
+        cancelBtn.addEventListener('click', resetForm);
+    </script>
+</body>
+</html>

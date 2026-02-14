@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School – Notices | Teachers Area</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="notice.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div class="email">info@kmcschool.edu.np</div>
+                <div class="phone">01-4792016, 4792906, 4790361, 4797111</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="attendence.html" class="nav-item">Attendance</a>
+        <a href="timetable.html" class="nav-item">Timetable</a>
+        <a href="#" class="nav-item active">Notice</a>
+        <a href="notice-up.html" class="nav-item">Update Notice</a>
+        <a href="teacher-homework.html" class="nav-item">Update Homework</a>
+        <a href="todo.html" class="nav-item">To do</a>  
+        <a href="teacher-feedback.html" class="nav-item">Parents Complain</a>
+        <a href="teacher-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="welcome-section">
+            <h1>School & Class Notices</h1>
+            <p>Latest updates and announcements for teachers</p>
+        </div>
+
+        <section class="notices-section">
+
+            <!-- 1st (Latest) Notice: KMC Hackathon 2026 -->
+            <div class="notice-card latest">
+                <div class="notice-header">
+                    <span class="notice-date">January 29, 2026</span>
+                    <span class="notice-tag">Competetion</span>
+                </div>
+                <h2>KMC Hackathon 2026</h2>
+                <p class="notice-content">
+                    We are excited to announce the <strong>KMC Hackathon 2026</strong> – a coding and innovation competition for students!
+                </p>
+                <ul class="prize-list">
+                    <li><strong>1st Prize:</strong> 2.5 Lakh</li>
+                    <li><strong>2nd Prize:</strong> 2 Lakh</li>
+                    <li><strong>3rd Prize:</strong> 1 Lakh</li>
+                </ul>
+                <h3>Rules & Guidelines</h3>
+                <ul class="rules-list">
+                    <li>Students must come up with their own  ideas — no stealing from websites or existing projects.</li>
+                    <li>Excessive use of AI tools to make project is not allowed (minor assistance is  ok, but idea & code must be of student).</li>
+                    <li>No copy-paste from internet sources — all work must be coded by students.</li>
+                    <li>Teams of 4 students allowed no more than that.</li>
+                </ul>
+                <p class="notice-footer">
+                    For any questions contact computer teacher(Aman'sir).
+                </p>
+            </div>
+
+            <!-- 2nd Notice: Second Mid-Term Exam -->
+            <div class="notice-card">
+                <div class="notice-header">
+                    <span class="notice-date">2080-10-14</span>
+                    <span class="notice-tag">Exam</span>
+                </div>
+                <h2>Third Mid-Term Examination 2082</h2>
+                <p class="notice-content">
+                    The Third Mid-Term Exam will be held from <strong>2082-10-14 (Wednesday)</strong> to <strong>2082-10-20 (Tuesday)</strong>.
+                </p>
+
+                <button class="show-routine-btn" onclick="toggleRoutine()">Show Routine</button>
+
+                <div id="exam-routine" class="exam-routine hidden">
+                    <h3>Third Mid-Term Routine – Grade 7 & Grade 9</h3>
+                    <table class="routine-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Grade 7</th>
+                                <th>Grade 9</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2082-10-14</td>
+                                <td>Wednesday</td>
+                                <td>Maths and English I</td>
+                                <td>Optional Maths and Nepali</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-15</td>
+                                <td>Thursday</td>
+                                <td>Science and Lifeskills</td>
+                                <td>Social and Computer / Accountancy</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-16</td>
+                                <td>Friday</td>
+                                <td colspan="2">Holiday</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-17</td>
+                                <td>Saturday</td>
+                                <td colspan="2">Holiday</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-18</td>
+                                <td>Sunday</td>
+                                <td>Social and English II</td>
+                                <td>Science and Compulsory English</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-19</td>
+                                <td>Monday</td>
+                                <td>Nepali and Computer</td>
+                                <td>Compulsory Maths</td>
+                            </tr>
+                            <tr>
+                                <td>2082-10-20</td>
+                                <td>Tuesday</td>
+                                <td>Newari</td>
+                                <td>No test for Grade 9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="notice-footer">
+                    Students should prepare well. Also, there will be regular classes after second period.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>© KMC School, Buddhanagar, Kathmandu • All rights reserved • 2026</p>
+    </footer>
+
+    <script>
+        function toggleRoutine() {
+            const routineDiv = document.getElementById('exam-routine');
+            routineDiv.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>

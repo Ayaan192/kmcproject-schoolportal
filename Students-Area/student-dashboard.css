@@ -1,0 +1,393 @@
+/* ==========================================================================
+   1. CORE RESET & BRANDING
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --kmc-blue: #003087;
+    --kmc-dark-blue: #0d1b46;
+    --kmc-red: #c8102e;
+    --kmc-gold: #ffcc00;
+    --bg-gradient: linear-gradient(to bottom, #e6f0ff, #f8f9fa);
+    --shadow-main: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   2. TOP HEADER (BRANDING)
+   ========================================================================== */
+.school-header {
+    background: var(--kmc-blue);
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   3. NAVIGATION BAR (WITH TRIGGER)
+   ========================================================================== */
+.main-nav {
+    background: var(--kmc-dark-blue);
+    padding: 10px 30px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Stays below sidebar */
+}
+
+.menu-trigger {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+.menu-trigger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background: var(--kmc-gold);
+    border-radius: 2px;
+}
+
+.nav-links-center {
+    flex: 1;
+    text-align: center;
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 15px;
+    padding: 8px 12px;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--kmc-gold);
+    background: rgba(255,255,255,0.08);
+    border-radius: 5px;
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+/* ==========================================================================
+   4. SIDEBAR SYSTEM
+   ========================================================================== */
+.sidebar {
+    position: fixed;
+    left: -320px; /* Hidden state */
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: var(--kmc-dark-blue);
+    color: white;
+    z-index: 3000; /* On top of everything */
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 30px;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    z-index: 2000; /* Between nav and sidebar */
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.sidebar-header h3 {
+    color: var(--kmc-gold);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.close-btn {
+    font-size: 35px;
+    cursor: pointer;
+    color: var(--kmc-gold);
+    line-height: 1;
+}
+
+.sidebar-links a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 15px 0;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.sidebar-links a:hover {
+    color: var(--kmc-gold);
+    padding-left: 10px;
+}
+
+.sidebar-links a.active-sidebar-link {
+    color: var(--kmc-gold);
+    border-left: 4px solid var(--kmc-gold);
+    padding-left: 10px;
+}
+
+.sidebar-divider {
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 15px 0;
+}
+
+.logout-link {
+    color: #ff9999 !important;
+}
+
+/* ==========================================================================
+   5. MAIN CONTENT AREA
+   ========================================================================== */
+.main-content {
+    flex: 1;
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 30px;
+    width: 100%;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-main);
+}
+
+.welcome-section h1 {
+    color: var(--kmc-blue);
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+}
+
+.welcome-section p {
+    color: #555;
+    font-size: 1.15rem;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    margin-bottom: 40px;
+    box-shadow: var(--shadow-main);
+    border-left: 6px solid var(--kmc-red);
+}
+
+.dashboard-section h2 {
+    color: var(--kmc-blue);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+/* ==========================================================================
+   6. STATUS WIDGETS (TODAY, TIME, PERIOD)
+   ========================================================================== */
+.today-message {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--kmc-blue);
+    margin: 15px 0;
+    text-align: center;
+}
+
+.period-status {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--kmc-red);
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.countdown-section {
+    text-align: center;
+    margin: 25px 0;
+    font-size: 1.4rem;
+    color: var(--kmc-red);
+}
+
+.days-remaining {
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   7. QUICK LINKS GRID (THE BOXES)
+   ========================================================================== */
+.quick-links .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.link-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #ddd;
+    display: block;
+}
+
+.link-card:hover {
+    background: #fff;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    border-color: var(--kmc-blue);
+}
+
+.link-card h3 {
+    color: var(--kmc-blue);
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.link-card p {
+    color: #555;
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   8. FOOTER & ANIMATIONS
+   ========================================================================== */
+.main-footer {
+    background: var(--kmc-blue);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   9. MOBILE RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Hide horizontal links on mobile, users must use sidebar */
+    .nav-links-center {
+        display: none;
+    }
+
+    .main-nav {
+        justify-content: flex-start;
+        padding: 10px 15px;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-section {
+        padding: 20px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+}

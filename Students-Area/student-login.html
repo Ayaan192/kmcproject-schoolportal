@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Student Login</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="student-login.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h2 id="formTitle">Student Login</h2>
+
+            <form id="loginForm" onsubmit="studentLogin(event)">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your full name" required>
+
+                <label for="cls">Class</label>
+                <select id="cls" required>
+                    <option value="" disabled selected>-- Select Class --</option>
+                    <option value="7DG">7 "DG"</option>
+                    </select>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+
+                <button type="submit" class="login-btn">Login</button>
+                <div class="error" id="loginErr" style="color: #c8102e; margin-top: 10px; font-size: 0.9rem; font-weight: bold;"></div>
+            </form>
+
+            <p class="register-link" id="regLinkText">
+                New student? <a href="#" onclick="showRegisterForm()">Register here</a>
+            </p>
+
+            <form id="registerForm" style="display:none;" onsubmit="studentRegister(event)">
+                <label for="regName">Full Name</label>
+                <input type="text" id="regName" placeholder="Enter your full name" required>
+
+                <label for="regCls">Class</label>
+                <select id="regCls" required>
+                    <option value="" disabled selected>-- Select Class --</option>
+                    <option value="7DG">7 "DG"</option>
+                </select>
+
+                <label for="regPassword">Set Password</label>
+                <input type="password" id="regPassword" placeholder="Create a password (min 4 chars)" required>
+
+                <button type="submit" class="login-btn">Register</button>
+                <div class="error" id="regErr" style="color: #c8102e; margin-top: 10px; font-size: 0.9rem; font-weight: bold;"></div>
+                <p class="back-link" style="margin-top: 15px; text-align: center;">
+                    <a href="#" onclick="hideRegisterForm()" style="text-decoration: none; color: #003087; font-weight: bold;">← Back to Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+        // --- 1. FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- 2. UI TOGGLES ---
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('regLinkText').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = 'Student Registration';
+        }
+
+        function hideRegisterForm() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('regLinkText').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = 'Student Login';
+        }
+
+        // --- 3. DEVICE TRACKING (For Security Sessions) ---
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let browser = "Other";
+            if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
+            else if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
+            else if (ua.indexOf("Safari") > -1) browser = "Safari";
+            
+            return {
+                device: navigator.platform,
+                browser: browser,
+                time: new Date().toLocaleString()
+            };
+        }
+
+        // --- 4. LOGIN LOGIC ---
+        async function studentLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const cls = document.getElementById('cls').value;
+            const password = document.getElementById('password').value;
+            const err = document.getElementById('loginErr');
+
+            err.textContent = "Authenticating...";
+
+            try {
+                const querySnapshot = await db.collection('students')
+                    .where('name', '==', name)
+                    .where('class', '==', cls)
+                    .where('password', '==', password).get();
+
+                if (!querySnapshot.empty) {
+                    const docId = querySnapshot.docs[0].id;
+                    const info = getDeviceInfo();
+                    const newToken = "SES-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+                    // Update Cloud Session and History
+                    await db.collection('students').doc(docId).update({
+                        sessionToken: newToken,
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        history: firebase.firestore.FieldValue.arrayUnion(info)
+                    });
+
+                    // CRITICAL: Clear all old data and set new localStorage keys
+                    localStorage.clear();
+                    localStorage.setItem('studentName', name);
+                    localStorage.setItem('studentClass', cls);
+                    localStorage.setItem('sessionToken', newToken);
+
+                    window.location.href = 'student-dashboard.html'; 
+                } else {
+                    err.textContent = 'Invalid credentials. Check name, class, or password.';
+                }
+            } catch (error) {
+                err.textContent = 'Login error: ' + error.message;
+            }
+        }
+
+        // --- 5. REGISTRATION LOGIC ---
+        async function studentRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const cls = document.getElementById('regCls').value;
+            const password = document.getElementById('regPassword').value;
+            const err = document.getElementById('regErr');
+
+            if (password.length < 4) {
+                err.textContent = 'Password must be at least 4 characters';
+                return;
+            }
+
+            try {
+                // Check if user already exists
+                const checkSnapshot = await db.collection('students')
+                    .where('name', '==', name)
+                    .where('class', '==', cls).get();
+
+                if (!checkSnapshot.empty) {
+                    err.textContent = 'Account already exists. Please login.';
+                    return;
+                }
+
+                const info = getDeviceInfo();
+                const newToken = "SES-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+                // Create student in Firestore
+                await db.collection('students').add({
+                    name: name,
+                    class: cls,
+                    password: password,
+                    sessionToken: newToken,
+                    history: [info],
+                    registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    // Default ID Card fields
+                    dob: "",
+                    parent: "",
+                    phone: "",
+                    address: ""
+                });
+
+                // Auto-login after registration
+                localStorage.clear();
+                localStorage.setItem('studentName', name);
+                localStorage.setItem('studentClass', cls);
+                localStorage.setItem('sessionToken', newToken);
+
+                alert('Registration successful!');
+                window.location.href = 'student-dashboard.html';
+            } catch (error) {
+                err.textContent = 'Registration failed: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

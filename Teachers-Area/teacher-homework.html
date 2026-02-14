@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Teacher - Manage Homework</title>
+    <link rel="stylesheet" href="teacher-homework.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="attendence.html" class="nav-item">Attendance</a>
+        <a href="timetable.html" class="nav-item">Timetable</a>
+        <a href="notice.html" class="nav-item">Notice</a>
+        <a href="notice-up.html" class="nav-item">Update Notice</a>
+        <a href="teacher-homework.html" class="nav-item active">Update Homework</a>
+        <a href="todo.html" class="nav-item">Todo</a>
+        <a href="teacher-feedback.html" class="nav-item">Parents Complain</a>
+        <a href="teacher-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="welcome-section">
+            <h1>Manage Homework & Assignments</h1>
+            <p>For Class 7 "DG" – upload new or edit previous ones</p>
+        </div>
+
+        
+        <section class="upload-section">
+            <h2 id="formTitle">Upload New Assignment</h2>
+            <form id="homeworkForm" onsubmit="saveHomework(event)">
+                <label for="title">Assignment Title</label>
+                <input type="text" id="title" placeholder="e.g. Science Project – Chapter 5" required>
+
+                <label for="description">Instructions / Questions</label>
+                <textarea id="description" rows="8" placeholder="Write full details, questions, or instructions here..." required></textarea>
+
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" required>
+
+                <div class="form-actions">
+                    <button type="submit" class="upload-btn" id="saveBtn">Upload Assignment</button>
+                    <button type="button" class="cancel-btn" id="cancelBtn" style="display:none;" onclick="resetForm()">Cancel Edit</button>
+                </div>
+                <div class="status" id="statusMsg"></div>
+                <input type="hidden" id="editingId">
+            </form>
+        </section>
+
+        <section class="homework-list-section">
+            <h2>Previous Assignments</h2>
+            <div id="homeworkList" class="homework-list">
+                <p>Loading assignments...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        
+        function loadHomework() {
+            const list = document.getElementById('homeworkList');
+            list.innerHTML = '<p>Loading assignments...</p>';
+
+            db.collection('homework')
+                .where('class', '==', '7DG')
+                .orderBy('createdAt', 'desc')
+                .get()
+                .then(snapshot => {
+                    list.innerHTML = '';
+                    if (snapshot.empty) {
+                        list.innerHTML = '<p>No homework uploaded yet.</p>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const id = doc.id;
+
+                        const item = document.createElement('div');
+                        item.className = 'homework-item';
+
+                        item.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p class="due-date">Due: ${data.dueDate || 'No due date'}</p>
+                            <p class="description">${data.description.replace(/\n/g, '<br>')}</p>
+                            <p class="posted">Posted: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'Unknown'}</p>
+                            <div class="actions">
+                                <button class="edit-btn" onclick="editHomework('${id}', '${data.title.replace(/'/g, "\\'")}', '${data.description.replace(/'/g, "\\'")}', '${data.dueDate || ''}')">Edit</button>
+                                <button class="delete-btn" onclick="deleteHomework('${id}')">Delete</button>
+                            </div>
+                        `;
+
+                        list.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    list.innerHTML = '<p>Error loading homework: ' + error.message + '</p>';
+                });
+        }
+
+        
+        function editHomework(id, title, description, dueDate) {
+            document.getElementById('formTitle').textContent = 'Edit Assignment';
+            document.getElementById('title').value = title;
+            document.getElementById('description').value = description;
+            document.getElementById('dueDate').value = dueDate;
+            document.getElementById('editingId').value = id;
+            document.getElementById('saveBtn').textContent = 'Save Changes';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        
+        async function saveHomework(e) {
+            e.preventDefault();
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const dueDate = document.getElementById('dueDate').value;
+            const editingId = document.getElementById('editingId').value;
+            const status = document.getElementById('statusMsg');
+
+            if (!title || !description || !dueDate) {
+                status.innerHTML = '<span style="color:#c8102e;">Title, description, and due date are required</span>';
+                return;
+            }
+
+            status.innerHTML = 'Saving... Please wait';
+
+            try {
+                const homeworkData = {
+                    title,
+                    description,
+                    dueDate,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                let promise;
+                if (editingId) {
+                    promise = db.collection('homework').doc(editingId).update(homeworkData);
+                } else {
+                    homeworkData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    homeworkData.class = "7DG";
+                    promise = db.collection('homework').add(homeworkData);
+                }
+
+                await promise;
+
+                status.innerHTML = '<span style="color:#28a745;">Assignment ' + (editingId ? 'updated' : 'saved') + ' successfully!</span>';
+                resetForm();
+                loadHomework();
+            } catch (error) {
+                status.innerHTML = '<span style="color:#c8102e;">Error: ' + error.message + '</span>';
+            }
+        }
+
+        
+        function resetForm() {
+            document.getElementById('homeworkForm').reset();
+            document.getElementById('formTitle').textContent = 'Upload New Assignment';
+            document.getElementById('editingId').value = '';
+            document.getElementById('saveBtn').textContent = 'Upload Assignment';
+            document.getElementById('cancelBtn').style.display = 'none';
+            document.getElementById('statusMsg').innerHTML = '';
+        }
+
+        
+        function deleteHomework(id) {
+            if (confirm('Delete this assignment permanently?')) {
+                db.collection('homework').doc(id).delete()
+                    .then(() => {
+                        alert('Assignment deleted!');
+                        loadHomework();
+                    })
+                    .catch(error => {
+                        alert('Error deleting: ' + error.message);
+                    });
+            }
+        }
+
+        
+        loadHomework();
+    </script>
+
+</body>
+</html>

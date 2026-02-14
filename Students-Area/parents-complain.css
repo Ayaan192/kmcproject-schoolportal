@@ -1,0 +1,333 @@
+/* --- RESET & ROOT VARIABLES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --kmc-blue-dark: #003087;
+    --kmc-blue: #0044cc;
+    --kmc-red: #c8102e;
+    --kmc-gold: #ffcc00;
+    --bg-light: #f4f7f6;
+    --white: #ffffff;
+    --hw-bg: #ffeeba;
+    --hw-text: #856404;
+    --mat-bg: #d1ecf1;
+    --mat-text: #0c5460;
+    --success-green: #28a745;
+}
+
+/* --- BASE STYLES --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-light);
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- HEADER & NAVIGATION --- */
+.main-header {
+    background: var(--kmc-blue-dark);
+    color: var(--white);
+    padding: 14px 30px;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+.logo-img { 
+    height: 50px; 
+}
+
+.kmc { 
+    font-weight: bold; 
+    font-size: 2rem; 
+    color: var(--kmc-gold); 
+}
+
+.school {
+    font-weight: bold;
+    font-size: 2rem;
+    color: white;
+}
+
+.main-nav {
+    background: #0d1b46;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 18px;
+    padding: 8px 12px;
+    transition: all 0.2s;
+    border-radius: 5px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--kmc-gold);
+    background: rgba(255,255,255,0.1);
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+.logout:hover {
+    color: #ff4444 !important;
+}
+
+/* --- LAYOUT --- */
+.main-content {
+    flex: 1;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 35px;
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    border-left: 5px solid var(--kmc-blue-dark);
+}
+
+.welcome-section h1 {
+    color: var(--kmc-blue-dark);
+    font-size: 2.3rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.welcome-section p {
+    color: var(--kmc-blue-dark);
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+}
+
+/* --- FORM STYLING --- */
+.feedback-form {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    border-left: 5px solid var(--kmc-red);
+    margin-bottom: 40px;
+}
+
+.feedback-form label {
+    display: block;
+    margin: 18px 0 8px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.feedback-form textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.submit-btn {
+    margin-top: 30px;
+    background: var(--kmc-red);
+    color: white;
+    border: none;
+    padding: 14px 35px;
+    border-radius: 8px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background: #a00d24;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 14px 35px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.status {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+    min-height: 22px;
+}
+
+/* --- FEEDBACK LIST & CARDS --- */
+.my-feedback h2 {
+    text-align: center;
+    color: var(--kmc-blue-dark);
+    margin-bottom: 20px;
+    font-size: 1.9rem;
+}
+
+.feedback-item {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    border-left: 5px solid #ffc107; /* Default Yellow for Pending */
+    transition: transform 0.2s;
+}
+
+.feedback-item:hover {
+    transform: translateY(-3px);
+}
+
+.feedback-item h3 {
+    color: var(--kmc-blue-dark);
+    margin-bottom: 8px;
+}
+
+.submitted {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* --- STATUS TAGS --- */
+.pending {
+    color: var(--hw-text);
+    font-weight: 600;
+    background: var(--hw-bg);
+    padding: 6px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+.replied {
+    color: #155724;
+    font-weight: 600;
+    background: #d4edda;
+    padding: 6px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+/* --- REPLY SECTION --- */
+.reply-section {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--success-green);
+    color: #155724;
+}
+
+/* --- ACTION BUTTONS --- */
+.actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.edit-btn {
+    background: var(--kmc-blue);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-btn {
+    background: var(--kmc-red);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* --- FOOTER --- */
+.main-footer {
+    background: var(--kmc-blue-dark);
+    color: white;
+    text-align: center;
+    padding: 25px 20px;
+    font-size: 0.95rem;
+    margin-top: auto;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .main-nav {
+        padding: 8px 0;
+    }
+
+    .nav-item {
+        display: inline-block;
+        margin: 5px;
+        font-size: 0.9rem;
+    }
+
+    .welcome-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .feedback-form {
+        padding: 20px;
+    }
+
+    .logo .kmc,
+    .logo .school {
+        font-size: 1.6rem;
+    }
+}

@@ -1,0 +1,369 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --kmc-gold: #ffcc00;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.school-header {
+    background: #003087;
+    color: #003087;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    background-color: #003087;
+    color: white;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.kmc {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.school{
+    font-size: 2rem;
+    font-weight: 700;
+    font-size:2 ;
+    color: var(--kmc-gold);
+
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    background-color: #003087;
+    color: white;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.main-nav {
+    background: #0d1b46;
+    padding: 14px 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 20px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #ffcc00;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+.main-content {
+    flex: 1;
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 30px;
+    width: 100%;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.welcome-section h1 {
+    color: #003087;
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+}
+
+.welcome-section p {
+    color: #555;
+    font-size: 1.15rem;
+}
+
+.upload-section {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border-left: 6px solid #c8102e;
+}
+
+.upload-section label {
+    display: block;
+    margin: 20px 0 10px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.upload-section input,
+.upload-section textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 1.05rem;
+}
+
+.upload-section textarea {
+    resize: vertical;
+    min-height: 160px;
+}
+
+.preview-container {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.preview-container img {
+    max-width: 140px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.upload-btn {
+    margin-top: 35px;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    width: 100%;
+}
+
+.upload-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.error, .success {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.error {
+    color: #c8102e;
+}
+
+.success {
+    color: #28a745;
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .main-nav {
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .upload-section {
+        padding: 30px 20px;
+    }
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.edit-btn, .delete-btn {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background: #0044cc;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #003087;
+}
+
+.delete-btn {
+    background: #c8102e;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #a00d24;
+}
+
+.status {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+    min-height: 24px;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.edit-btn, .delete-btn {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background: #0044cc;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #003087;
+}
+
+.delete-btn {
+    background: #c8102e;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #a00d24;
+}
+
+.status {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+    min-height: 24px;
+}
+
+.preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.remove-img {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #c8102e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 24px;
+}
+.cancel-btn {
+    margin-top: 35px;
+    background: #6c757d;           /* gray / secondary color */
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Optional: make buttons appear side-by-side on larger screens */
+.form-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 35px;
+}
+
+.form-actions button {
+    flex: 1;
+    min-width: 200px;   /* prevents them from becoming too narrow */
+    max-width: 300px;
+}

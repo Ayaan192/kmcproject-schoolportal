@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #e6f0ff, #f8f9fa);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-header {
+    background: #003087;
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.login-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.login-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    padding: 45px 40px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    border-top: 8px solid #c8102e;
+}
+
+.login-card h2 {
+    color: #003087;
+    margin-bottom: 35px;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin: 24px 0 10px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #003087;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0,48,135,0.1);
+}
+
+.login-btn {
+    margin-top: 35px;
+    background: #c8102e;
+    color: white;
+    border: none;
+    padding: 16px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.login-btn:hover {
+    background: #a00d24;
+    transform: translateY(-2px);
+}
+
+.error {
+    color: #c8102e;
+    font-weight: 600;
+    margin-top: 15px;
+    min-height: 24px;
+}
+
+.back-link {
+    margin-top: 25px;
+    font-size: 1.05rem;
+    color: #555;
+    text-align: center;
+}
+
+.back-link a {
+    color: #003087;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .login-card {
+        padding: 35px 25px;
+    }
+}

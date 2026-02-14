@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC Portal | Account Settings</title>
+    <link rel="stylesheet" href="test.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<div id="toast"></div>
+<body>
+
+    <div class="settings-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="kmc logo.png" class="user-avatar">
+                <div class="user-info">
+                    <h4 id="sidebarName">Student Name</h4>
+                    <p id="sidebarClass">Loading...</p>
+                    <div class="status-container">
+                        <span id="statusDot"></span>
+                        <span id="statusText">Cloud Online</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="showTab('about-tab', this)">
+                    <span class="nav-icon">🆔</span> Digital ID Card
+                </button>
+                <button class="nav-item" onclick="showTab('edit-tab', this)">
+                    <span class="nav-icon">📝</span> Profile Info
+                </button>
+                <button class="nav-item" onclick="showTab('security-tab', this)">
+                    <span class="nav-icon">🔒</span> Password & Security
+                </button>
+                <button class="nav-item" onclick="showTab('session-tab', this)">
+                    <span class="nav-icon">💻</span> Security Sessions
+                </button>
+
+                <div class="sidebar-footer">
+    <hr style="margin-bottom: 15px; border: 0; border-top: 1px solid var(--border);">
+    
+    <button type="button" class="nav-item exit-btn" onclick="goToDashboard()">
+        <span class="nav-icon">🏠</span> Back to Dashboard
+    </button>
+    
+    <button type="button" class="nav-item" onclick="logout()" style="color:var(--accent-red); margin-top:5px;">
+        <span class="nav-icon">🚪</span> Logout
+    </button>
+</div>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <section id="about-tab" class="tab-content active">
+                <div class="tab-header">
+                    <h1>Digital ID Card</h1>
+                    <p>Verified Student Identity.</p>
+                </div>
+                <div class="id-card-display">
+                    <div>
+                        <div class="digital-id" id="idCardFrame">
+                            <div class="id-header-top">
+                                <img src="kmc logo.png" class="card-logo">
+                                <div class="card-title">
+                                    <h1 class="id-card-brand"><span class="K">K</span><span class="M">M</span><span class="C">C</span> <span class="school-text">School</span></h1>
+                                    <p>Buddhanagar, Kathmandu</p>
+                                </div>
+                            </div>
+                            <div class="id-mid-row">
+                                <div class="qrcode-section">
+                                    <div id="qrcode"></div>
+                                    <div class="id-subtext">
+                                        <p id="idQrCode">CODE</p>
+                                        <p id="idQrClass">CLASS: ---</p>
+                                    </div>
+                                </div>
+                                <div class="photo-section"><img src="student.jpg"></div>
+                            </div>
+                            <div class="student-info">
+                                <h2 id="idName">STUDENT NAME</h2>
+                                <div class="info-grid">
+                                    <div class="label">Grade</div><div class="val">: <span id="idGrade">---</span></div>
+                                    <div class="label">DOB</div><div class="val">: <span id="idDob">---</span></div>
+                                    <div class="label">Parent</div><div class="val">: <span id="idParent">---</span></div>
+                                    <div class="label">Phone</div><div class="val">: <span id="idPhone">---</span></div>
+                                    <div class="label">Address</div><div class="val">: <span id="idAddress">---</span></div>
+                                </div>
+                            </div>
+                            <div class="id-card-footer"><div class="red-bottom-bar"></div></div>
+                        </div>
+                        <button onclick="downloadID()" class="save-btn download-btn">📥 DOWNLOAD ID CARD (.PNG)</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="edit-tab" class="tab-content">
+                <div class="tab-header">
+                    <h1>Profile Management</h1>
+                    <p>Update your cloud records.</p>
+                </div>
+                
+                <div class="settings-form">
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Profile Completion</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progressBar"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="input-box full"><label>Full Name</label><input type="text" id="inputName"></div>
+                        <div class="input-box"><label>Grade</label><input type="text" id="inputGrade"></div>
+                        <div class="input-box"><label>DOB</label><input type="text" id="inputDob"></div>
+                        <div class="input-box"><label>Parent Name</label><input type="text" id="inputParent"></div>
+                        <div class="input-box"><label>Phone</label><input type="text" id="inputPhone"></div>
+                        <div class="input-box full"><label>Address</label><input type="text" id="inputAddress"></div>
+                    </div>
+                    <button id="updateBtn" class="save-btn">☁️ SYNC PROFILE</button>
+                </div>
+            </section>
+
+            <section id="security-tab" class="tab-content">
+                <div class="tab-header">
+                    <h1>Change Password</h1>
+                    <p>Ensure your account is protected.</p>
+                </div>
+                <div class="settings-form">
+                    <div class="input-box"><label>New Password</label><input type="password" id="newPass" placeholder="Min 4 characters"></div>
+                    <div class="input-box"><label>Confirm New Password</label><input type="password" id="confirmPass"></div>
+                    <button onclick="changePassword()" class="save-btn" style="background: var(--accent-red);">UPDATE PASSWORD</button>
+                </div>
+            </section>
+
+            <section id="session-tab" class="tab-content">
+                <div class="tab-header">
+                    <h1>Security Sessions</h1>
+                    <p>Single device enforcement is active.</p>
+                </div>
+                <div class="warning-box">
+                    <p><strong>Current Status:</strong> Active</p>
+                    <p id="sessionIDDisplay"><strong>Session Token:</strong> Loading...</p>
+                    <div class="warning-footer">
+                        ⚠️ New logins from other devices will automatically terminate this session.
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <h3>Recent Login Activity</h3>
+                    <div id="loginHistoryList">
+                        <p style="color: gray; margin-top: 15px;">Fetching activity logs...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        /* --- FIREBASE & APP LOGIC --- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const loggedInName = localStorage.getItem('studentName'); 
+        const loggedInClass = localStorage.getItem('studentClass');
+        let mySessionToken = localStorage.getItem('sessionToken');
+
+        if (!loggedInName || !mySessionToken) {
+            window.location.href = 'student-login.html';
+        }
+
+        function startSessionWatcher(docId) {
+            db.collection('students').doc(docId).onSnapshot((doc) => {
+                const data = doc.data();
+                if (data.sessionToken !== mySessionToken) {
+                    alert("Logged in from another device. You are being kicked! 🚪");
+                    localStorage.clear();
+                    window.location.href = 'student-login.html';
+                }
+            });
+        }
+
+        function updateProgress() {
+            const fields = ['inputName', 'inputGrade', 'inputDob', 'inputParent', 'inputPhone', 'inputAddress'];
+            let filled = 0;
+            fields.forEach(id => {
+                if(document.getElementById(id).value.trim() !== "") filled++;
+            });
+            const percent = Math.round((filled / fields.length) * 100);
+            document.getElementById('progressBar').style.width = percent + "%";
+            document.getElementById('progressPercent').innerText = percent + "%";
+        }
+
+        function downloadID() {
+            const idElement = document.getElementById("idCardFrame");
+            html2canvas(idElement, { scale: 3, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `KMC_ID_${loggedInName}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function logout() {
+            if(confirm("Logout from portal?")) {
+                localStorage.clear();
+                window.location.href = 'student-login.html';
+            }
+        }
+
+        function generateIdCode(name, grade) {
+            if(!name || !grade) return "CODE";
+            const names = name.trim().split(" ");
+            let p1 = names[0].substring(0, 2).toUpperCase();
+            let p2 = (names.length > 1) ? names[names.length - 1].substring(0, 2).toUpperCase() : names[0].substring(2, 4).toUpperCase();
+            let p3 = grade.replace(/\s+/g, '').toUpperCase();
+            return p1 + p2 + p3;
+        }
+
+        function liveSync() {
+            const name = document.getElementById('inputName').value;
+            const grade = document.getElementById('inputGrade').value;
+            document.getElementById('idName').innerText = name.toUpperCase() || "NAME";
+            document.getElementById('idGrade').innerText = grade.toUpperCase() || "---";
+            document.getElementById('idDob').innerText = document.getElementById('inputDob').value || "---";
+            document.getElementById('idParent').innerText = document.getElementById('inputParent').value || "---";
+            document.getElementById('idPhone').innerText = document.getElementById('inputPhone').value || "---";
+            document.getElementById('idAddress').innerText = document.getElementById('inputAddress').value || "---";
+            document.getElementById('sidebarName').innerText = name || "Student";
+            const code = generateIdCode(name, grade);
+            document.getElementById('idQrCode').innerText = code;
+            document.getElementById('idQrClass').innerText = "CLASS: " + grade.toUpperCase();
+            updateProgress();
+        }
+
+        async function loadData() {
+            const snap = await db.collection('students')
+                .where('name', '==', loggedInName)
+                .where('class', '==', loggedInClass).get();
+
+            if (!snap.empty) {
+                const data = snap.docs[0].data();
+                const docId = snap.docs[0].id;
+                sessionStorage.setItem('currentDocId', docId);
+
+                document.getElementById('inputName').value = data.name;
+                document.getElementById('inputGrade').value = data.class || data.grade;
+                document.getElementById('inputDob').value = data.dob || "";
+                document.getElementById('inputParent').value = data.parent || "";
+                document.getElementById('inputPhone').value = data.phone || "";
+                document.getElementById('inputAddress').value = data.address || "";
+                document.getElementById('sessionIDDisplay').innerText = "Session Token: " + mySessionToken;
+                document.getElementById('sidebarClass').innerText = "Class: " + (data.class || data.grade);
+                
+                liveSync();
+                updateQR(generateIdCode(data.name, data.class || data.grade));
+                renderHistory(data.history);
+                startSessionWatcher(docId);
+            }
+        }
+
+        function renderHistory(historyArray) {
+            const historyList = document.getElementById('loginHistoryList');
+            historyList.innerHTML = ""; 
+            if (historyArray && historyArray.length > 0) {
+                historyArray.slice(-5).reverse().forEach(log => {
+                    const logDiv = document.createElement('div');
+                    logDiv.className = "session-log-item";
+                    logDiv.innerHTML = `
+                        <div class="session-header">
+                            <span class="session-device">💻 ${log.device}</span>
+                            <span class="session-time">${log.time}</span>
+                        </div>
+                        <div style="color:#555;">Browser: ${log.browser}</div>`;
+                    historyList.appendChild(logDiv);
+                });
+            }
+        }
+
+        function updateQR(text) {
+            const container = document.getElementById("qrcode");
+            container.innerHTML = "";
+            new QRCode(container, { text: text, width: 80, height: 80 });
+        }
+
+        document.getElementById('updateBtn').onclick = async () => {
+            const docId = sessionStorage.getItem('currentDocId');
+            const update = {
+                name: document.getElementById('inputName').value,
+                class: document.getElementById('inputGrade').value,
+                dob: document.getElementById('inputDob').value,
+                parent: document.getElementById('inputParent').value,
+                phone: document.getElementById('inputPhone').value,
+                address: document.getElementById('inputAddress').value
+            };
+            await db.collection('students').doc(docId).update(update);
+            alert("Profile Synced! ☁️");
+        };
+
+        window.addEventListener('online', () => {
+            document.getElementById('statusDot').style.background = "#2ecc71";
+            document.getElementById('statusText').innerText = "Cloud Online";
+        });
+        window.addEventListener('offline', () => {
+            document.getElementById('statusDot').style.background = "#e74c3c";
+            document.getElementById('statusText').innerText = "Offline Mode";
+        });
+
+        const fieldIds = ['inputName', 'inputGrade', 'inputDob', 'inputParent', 'inputPhone', 'inputAddress'];
+        fieldIds.forEach(id => document.getElementById(id).addEventListener('input', liveSync));
+
+        window.showTab = (id, btn) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        };
+        function goToDashboard() {
+    const toast = document.getElementById("toast");
+    
+    if (toast) {
+        toast.innerText = "Returning to Dashboard... 🏠";
+        toast.classList.add("show");
+        
+        // Console log to verify it's working in the background
+        console.log("Toast triggered successfully");
+    }
+
+    // Delay navigation so you can actually read the toast
+    setTimeout(() => {
+        window.location.href = 'student-dashboard.html';
+    }, 1000); 
+}
+
+async function changePassword() {
+    const newPass = document.getElementById('newPass').value;
+    const confirmPass = document.getElementById('confirmPass').value;
+    const docId = sessionStorage.getItem('currentDocId');
+
+    // 1. Validation
+    if (newPass.length < 4) {
+        alert("Password must be at least 4 characters long! 🔒");
+        return;
+    }
+
+    if (newPass !== confirmPass) {
+        alert("Passwords do not match! ❌");
+        return;
+    }
+
+    try {
+        // 2. Update Firebase
+        await db.collection('students').doc(docId).update({
+            password: newPass
+        });
+
+        alert("Password updated successfully! ✅");
+        
+        // 3. Clear inputs
+        document.getElementById('newPass').value = "";
+        document.getElementById('confirmPass').value = "";
+
+    } catch (error) {
+        console.error("Error updating password:", error);
+        alert("Failed to update password. Try again.");
+    }
+}
+        
+
+        loadData();
+                    
+    </script>
+</body>
+</html>
