@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Parents' Feedback</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="parents-complain.css">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div class="email">info@kmcschool.edu.np</div>
+                <div class="phone">01-4792016, 4792906, 4790361, 4797111</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="student-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="student-timetable.html" class="nav-item">Timetable</a>
+        <a href="student-notice.html" class="nav-item">Notices</a>
+        <a href="student-homework.html" class="nav-item">Homework</a>
+        <a href="#" class="nav-item active">Parents Complain</a>
+        <a class="nav-item" href="message.html">Class Chat</a>
+        <a href="student-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Parents' Feedback / Complaints</h1>
+            <p>Share any concerns or suggestions</p>
+            <p class="note">Messages are private.</p>
+        </div>
+
+        <!-- Login required message -->
+        <div id="notLoggedIn" style="text-align:center; padding:30px; background:#fff3cd; border-radius:10px; margin:20px auto; max-width:600px; display:none;">
+            <h3>Please Login First</h3>
+            <p>You need to be logged in as a student to submit or view complaints.</p>
+            <a href="student-login.html" style="color:#c8102e; font-weight:bold; text-decoration:underline;">Go to Login Page</a>
+        </div>
+
+        <!-- Feedback Form (hidden if not logged in) -->
+        <section class="feedback-form" id="feedbackSection" style="display:none;">
+            <h2 id="formTitle">Submit New Feedback</h2>
+            <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                <input type="hidden" id="editId">
+                <label for="title">Subject / Title</label>
+                <input type="text" id="title" placeholder="e.g. Concern about recent exam schedule" required>
+
+                <label for="message">Your Message</label>
+                <textarea id="message" rows="8" placeholder="Explain the issue or suggestion in detail..." required></textarea>
+
+                <label for="parentName">Parent's Name (optional)</label>
+                <input type="text" id="parentName" placeholder="Your parent's name">
+
+                <label for="contact">Contact (optional)</label>
+                <input type="text" id="contact" placeholder="Phone or email for follow-up">
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Feedback</button>
+                    <button type="button" class="cancel-btn" id="cancelBtn" style="display:none;" onclick="resetForm()">Cancel Edit</button>
+                </div>
+                <div class="status" id="statusMsg"></div>
+            </form>
+        </section>
+
+        <!-- My Feedback List (hidden if not logged in) -->
+        <section class="my-feedback" id="myFeedbackSection" style="display:none;">
+            <h2>My Previous Feedback</h2>
+            <div id="myFeedbackList">
+                <p>Loading your feedback...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+        // Firebase Config – Replace apiKey with your real one!
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Get logged-in student from sessionStorage (set by login page)
+        // New way (Metal box - persistent)
+const loggedInStudentName = localStorage.getItem('studentName');
+
+        // Show/hide sections based on login
+        if (!loggedInStudentName) {
+            document.getElementById('notLoggedIn').style.display = 'block';
+        } else {
+            document.getElementById('feedbackSection').style.display = 'block';
+            document.getElementById('myFeedbackSection').style.display = 'block';
+            loadMyFeedback();
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const formTitle = document.getElementById('formTitle');
+        const status = document.getElementById('statusMsg');
+
+        // Submit or Update Feedback
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const parentName = document.getElementById('parentName').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            const editId = document.getElementById('editId').value;
+
+            if (!title || !message) {
+                status.innerHTML = '<span style="color:#c8102e;">Title and message are required</span>';
+                return;
+            }
+
+            status.innerHTML = 'Submitting...';
+
+            try {
+                const feedbackData = {
+                    title,
+                    message,
+                    parentName: parentName || 'Anonymous',
+                    contact: contact || 'Not provided',
+                    studentClass: '7DG',
+                    studentId: loggedInStudentName,  // From login
+                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'pending',
+                    reply: '',
+                    repliedAt: null
+                };
+
+                if (editId) {
+                    const docRef = db.collection('feedback').doc(editId);
+                    const doc = await docRef.get();
+                    if (doc.exists && doc.data().studentId === loggedInStudentName) {
+                        await docRef.update({
+                            ...feedbackData,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        status.innerHTML = '<span style="color:#28a745;">Feedback updated successfully!</span>';
+                    } else {
+                        status.innerHTML = '<span style="color:#c8102e;">You can only edit your own feedback</span>';
+                    }
+                } else {
+                    await db.collection('feedback').add(feedbackData);
+                    status.innerHTML = '<span style="color:#28a745;">Thank you! Your feedback has been submitted.</span>';
+                }
+
+                document.getElementById('feedbackForm').reset();
+                setTimeout(() => status.innerHTML = '', 5000);
+                cancelBtn.style.display = 'none';
+                formTitle.textContent = 'Submit New Feedback';
+                submitBtn.textContent = 'Submit Feedback';
+            } catch (error) {
+                status.innerHTML = '<span style="color:#c8102e;">Error: ' + error.message + '</span>';
+            }
+        });
+
+        // Load only this student's feedback
+        function loadMyFeedback() {
+            const list = document.getElementById('myFeedbackList');
+            list.innerHTML = '<p>Loading your feedback...</p>';
+
+            db.collection('feedback')
+                .where('studentId', '==', loggedInStudentName)
+                .onSnapshot(snapshot => {
+                    list.innerHTML = '';
+                    if (snapshot.empty) {
+                        list.innerHTML = '<p>No feedback submitted yet.</p>';
+                        return;
+                    }
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const id = doc.id;
+                        const submittedDate = data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleString() : 'Unknown';
+
+                        const item = document.createElement('div');
+                        item.className = 'feedback-item';
+                        item.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p class="date">Submitted: ${submittedDate}</p>
+                            <p>${data.message}</p>
+                            ${data.parentName ? `<p><strong>Parent:</strong> ${data.parentName}</p>` : ''}
+                            ${data.contact ? `<p><strong>Contact:</strong> ${data.contact}</p>` : ''}
+                            ${data.reply ? `
+                                <div class="reply">
+                                    <strong>School Reply:</strong> ${data.reply}
+                                    <small>${data.repliedAt ? new Date(data.repliedAt.toDate()).toLocaleString() : ''}</small>
+                                </div>
+                            ` : '<p class="pending">Status: Pending (no reply yet)</p>'}
+                            <div class="actions">
+                                ${data.status === 'pending' ? `
+                                    <button class="edit-btn" onclick="editFeedback('${id}', '${data.title.replace(/'/g, "\\'")}', '${data.message.replace(/'/g, "\\'")}', '${data.parentName || ''}', '${data.contact || ''}')">Edit</button>
+                                    <button class="delete-btn" onclick="deleteFeedback('${id}')">Delete</button>
+                                ` : '<small>Locked after reply</small>'}
+                            </div>
+                        `;
+                        list.appendChild(item);
+                    });
+                }, error => {
+                    list.innerHTML = '<p>Error loading feedback: ' + error.message + '</p>';
+                });
+        }
+
+        function editFeedback(id, title, message, parentName, contact) {
+            document.getElementById('editId').value = id;
+            document.getElementById('title').value = title;
+            document.getElementById('message').value = message;
+            document.getElementById('parentName').value = parentName;
+            document.getElementById('contact').value = contact;
+            document.getElementById('formTitle').textContent = 'Edit Your Feedback';
+            document.getElementById('submitBtn').textContent = 'Save Changes';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteFeedback(id) {
+            if (confirm('Delete this feedback permanently?')) {
+                db.collection('feedback').doc(id).delete()
+                    .then(() => alert('Feedback deleted.'))
+                    .catch(error => alert('Error deleting: ' + error.message));
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('formTitle').textContent = 'Submit New Feedback';
+            document.getElementById('submitBtn').textContent = 'Submit Feedback';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

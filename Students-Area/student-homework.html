@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School | Homework</title>
+    <link rel="stylesheet" href="student-homework.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="student-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="student-timetable.html" class="nav-item">Timetable</a>
+        <a href="student-notice.html" class="nav-item">Notices</a>
+        <a href="student-homework.html" class="nav-item active">Homework</a>
+        <a href="parents-complain.html" class="nav-item">Parents Complain</a>
+        <a class="nav-item" href="message.html">Class Chat</a>
+        <a href="student-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+
+        <div class="welcome-section">
+            <h1>Homework & Assignments</h1>
+            <p>View all current and upcoming tasks for Class 7 "DG"</p>
+        </div>
+
+        <section class="homework-list" id="homeworkList">
+            <p>Loading assignments...</p>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        © KMC School, Buddhanagar, Kathmandu • Est. 2006 • All rights reserved
+    </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function loadHomework() {
+            const list = document.getElementById('homeworkList');
+            list.innerHTML = '<p>Loading assignments...</p>';
+
+            db.collection('homework')
+                .orderBy('createdAt', 'desc')  
+                .get()
+                .then(snapshot => {
+                    list.innerHTML = '';
+                    if (snapshot.empty) {
+                        list.innerHTML = '<p>No homework assigned yet.</p>';
+                        return;
+                    }
+
+                    let hasHomework = false;
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+
+
+                        if (data.class !== '7DG') return;
+
+                        hasHomework = true;
+
+                        const item = document.createElement('div');
+                        item.className = 'homework-item';
+
+                        let imagesHtml = '';
+                        if (data.images && data.images.length > 0) {
+                            imagesHtml = '<div class="homework-images">';
+                            data.images.forEach(url => {
+                                imagesHtml += `
+                                    <div class="image-wrapper">
+                                        <img src="${url}" alt="Homework image" class="homework-img">
+                                        <a href="${url}" target="_blank" class="view-full">View Full</a>
+                                    </div>
+                                `;
+                            });
+                            imagesHtml += '</div>';
+                        }
+
+                        item.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p class="due-date">Due: ${data.dueDate || 'No due date'}</p>
+                            <p class="description">${data.description.replace(/\n/g, '<br>')}</p>
+                            ${imagesHtml}
+                            <p class="posted">Posted: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'Unknown'}</p>
+                        `;
+
+                        list.appendChild(item);
+                    });
+
+                    if (!hasHomework) {
+                        list.innerHTML = '<p>No homework for Class 7 "DG" yet.</p>';
+                    }
+                })
+                .catch(error => {
+                    list.innerHTML = '<p>Error loading homework: ' + error.message + '</p>';
+                });
+        }
+
+        
+        loadHomework();
+    </script>
+
+</body>
+</html>

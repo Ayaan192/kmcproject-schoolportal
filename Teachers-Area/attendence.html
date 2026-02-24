@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School – Attendance | Class 7 "DG"</title>
+    <link rel="stylesheet" href="attendance.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+        </div>
+        <div class="contact-info">
+            <div class="email">info@kmcschool.edu.np</div>
+            <div class="phone">01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </div>
+</header>
+
+<nav class="main-nav">
+    <a href="dashboard.html" class="nav-item">Dashboard</a>
+    <a href="attendence.html" class="nav-item active">Attendance</a>
+    <a href="timetable.html" class="nav-item">Timetable</a>
+    <a href="notice.html" class="nav-item">Notice</a>
+    <a href="notice-up.html" class="nav-item">Update Notice</a>
+    <a href="teacher-homework.html" class="nav-item">Update Homework</a>
+    <a href="todo.html" class="nav-item">To do</a>
+    <a href="teacher-feedback.html" class="nav-item">Parents Complain</a>
+    <a href="teacher-login.html" class="nav-item logout">Logout</a>
+</nav>
+
+<main class="main-content">
+    <div class="welcome-section">
+        <h1>Attendance – Class 7 "DG"</h1>
+        <p id="date-display">Attendance of <span id="current-date"></span></p>
+    </div>
+
+    <section class="attendance-section">
+        <form id="attendanceForm">
+            <div style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content:center;">
+                <button type="button" class="mark-all-btn" onclick="markAll('present')">Mark All Present</button>
+                <button type="button" class="mark-all-btn" onclick="markAll('absent')">Mark All Absent</button>
+                <button type="button" class="mark-all-btn" onclick="markAll('late')">Mark All Late</button>
+            </div>
+
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>S.N.</th>
+                        <th>Student Name</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Late</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Ayaan Ansari</td><td><input type="radio" name="att1" value="present"></td><td><input type="radio" name="att1" value="absent"></td><td><input type="radio" name="att1" value="late"></td></tr>
+                    <tr><td>2</td><td>Abik Thapa</td><td><input type="radio" name="att2" value="present"></td><td><input type="radio" name="att2" value="absent"></td><td><input type="radio" name="att2" value="late"></td></tr>
+                    <tr><td>3</td><td>Niraj Budhathoki</td><td><input type="radio" name="att3" value="present"></td><td><input type="radio" name="att3" value="absent"></td><td><input type="radio" name="att3" value="late"></td></tr>
+                    <tr><td>4</td><td>Stulya Chaulagain</td><td><input type="radio" name="att4" value="present"></td><td><input type="radio" name="att4" value="absent"></td><td><input type="radio" name="att4" value="late"></td></tr>
+                    <tr><td>5</td><td>Prabin Bhandari</td><td><input type="radio" name="att5" value="present"></td><td><input type="radio" name="att5" value="absent"></td><td><input type="radio" name="att5" value="late"></td></tr>
+                    <tr><td>6</td><td>Dipesh Niraula</td><td><input type="radio" name="att6" value="present"></td><td><input type="radio" name="att6" value="absent"></td><td><input type="radio" name="att6" value="late"></td></tr>
+                    <tr><td>7</td><td>Rishab Niraula</td><td><input type="radio" name="att7" value="present"></td><td><input type="radio" name="att7" value="absent"></td><td><input type="radio" name="att7" value="late"></td></tr>
+                </tbody>
+            </table>
+
+            <div class="form-actions">
+                <button type="button" class="save-btn" id="btnSave">Save to Cloud & Excel</button>
+                <button type="button" class="reset-btn" onclick="resetForm()">Clear Selection</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Editable Notify Center -->
+    <section class="attendance-section" id="notifyCenter" style="display:none; border-left: 6px solid var(--kmc-red);">
+        <h2>Absent Notify Center</h2>
+        <p id="notifyMessage" style="margin: 15px 0; font-weight: 500;"></p>
+        <div id="notifyList"></div>
+    </section>
+
+    <!-- Daily Summary -->
+    <div id="summarySection" class="dashboard-section">
+        <h2 style="text-align: center;">Daily Attendance Summary</h2>
+        <div style="height: 300px; margin: 20px 0;">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+        <div class="names-box">
+            <h3 style="color: #28a745;">🟢 Present Today:</h3>
+            <ul id="present-list-today" class="pills-list"><li>Loading...</li></ul>
+            <h3 style="color: #c8102e; margin-top: 20px;">🔴 Absent Today:</h3>
+            <ul id="absent-list-today" class="pills-list"><li>Loading...</li></ul>
+        </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <div style="text-align: center; margin: 30px 0;">
+        <button class="save-btn" id="btnViewPeriods" style="padding:12px 30px; font-size:1.1rem;">
+            View Weekly, Monthly and Yearly Attendance
+        </button>
+    </div>
+
+    <div id="weeklySection" class="dashboard-section" style="display:none;">
+        <h2 style="text-align: center;">Weekly Attendance (Last 7 Days)</h2>
+        <div style="height: 350px; margin: 20px 0;">
+            <canvas id="weeklyChart"></canvas>
+        </div>
+    </div>
+
+    <div id="monthlySection" class="dashboard-section">
+        <h2 style="text-align: center;">Monthly Attendance (Current Month)</h2>
+        <div style="height: 350px; margin: 20px 0;">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+    </div>
+
+    <div id="yearlySection" class="dashboard-section" style="display:none;">
+        <h2 style="text-align: center;">Yearly Attendance Summary</h2>
+        <div style="height: 350px; margin: 20px 0;">
+            <canvas id="yearlyChart"></canvas>
+        </div>
+    </div>
+
+    <!-- History -->
+    <div id="historySection" class="dashboard-section">
+        <h2 style="text-align: center;">View Past Attendance</h2>
+        <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+            <input type="date" id="historyDate" style="padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+            <button type="button" class="mark-all-btn" id="btnHistory">Check History</button>
+        </div>
+        <div id="historyResult" style="display: none; border-top: 1px solid #eee; padding-top: 20px;">
+            <p id="historyInfo" style="text-align: center; font-weight: bold; margin-bottom: 10px;"></p>
+            <div class="names-box">
+                <h3 style="color: #28a745;">🟢 Was Present:</h3>
+                <ul id="history-present-list" class="pills-list"></ul>
+                <h3 style="color: #c8102e; margin-top: 15px;">🔴 Was Absent:</h3>
+                <ul id="history-absent-list" class="pills-list"></ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+        authDomain: "kmcproject-techersarea.firebaseapp.com",
+        projectId: "kmcproject-techersarea",
+        storageBucket: "kmcproject-techersarea.firebasestorage.app",
+        messagingSenderId: "997910909059",
+        appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const TOTAL_STUDENTS = 7;
+
+    const studentEmails = {
+        "Ayaan Ansari": "Ayaan.nsr.2020@gmail.com",
+        "Abik Thapa": "abik@example.com",
+        "Niraj Budhathoki": "niraj@example.com",
+        "Stulya Chaulagain": "stulya@example.com",
+        "Prabin Bhandari": "prabin@example.com",
+        "Dipesh Niraula": "dipesh@example.com",
+        "Rishab Niraula": "rishab@example.com"
+    };
+
+    let dailyChart, weeklyChart, monthlyChart, yearlyChart;
+    const today = new Date();
+    const dateId = today.toISOString().split('T')[0];
+    document.getElementById('current-date').textContent = today.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    function calcPercent(count) {
+        return ((count / TOTAL_STUDENTS) * 100).toFixed(1) + '%';
+    }
+
+    // Mark All
+    window.markAll = (value) => {
+        document.querySelectorAll(`input[type="radio"][value="${value}"]`).forEach(radio => radio.checked = true);
+    };
+
+    window.resetForm = () => {
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    };
+
+    // Daily Chart
+    function updateDailyChart(p, a, l) {
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        if (dailyChart) dailyChart.destroy();
+        dailyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Present', 'Absent', 'Late'],
+                datasets: [{
+                    label: 'Students',
+                    data: [p, a, l],
+                    backgroundColor: ['#28a745', '#c8102e', '#ffc107']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.parsed.y} (${calcPercent(ctx.parsed.y)})`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: TOTAL_STUDENTS }
+                }
+            }
+        });
+    }
+
+    async function loadTodayAttendance() {
+        try {
+            const docRef = doc(db, "attendance", dateId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                updateDailyChart(data.pCount || 0, data.aCount || 0, data.lCount || 0);
+                document.getElementById('present-list-today').innerHTML = (data.presentNames || []).map(n => `<li>${n}</li>`).join('') || "<li>None</li>";
+                document.getElementById('absent-list-today').innerHTML = (data.absentNames || []).map(n => `<li>${n}</li>`).join('') || "<li>None</li>";
+            } else {
+                updateDailyChart(0, 0, 0);
+                document.getElementById('present-list-today').innerHTML = "<li>Not saved yet</li>";
+                document.getElementById('absent-list-today').innerHTML = "<li>Not saved yet</li>";
+            }
+        } catch (e) {
+            console.error("Daily load error:", e);
+        }
+    }
+
+    
+
+    // Weekly Chart
+    async function loadWeeklyAttendance() {
+        try {
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 6);
+            const endDate = new Date();
+
+            const q = query(
+                collection(db, "attendance"),
+                where("timestamp", ">=", startDate),
+                where("timestamp", "<=", endDate)
+            );
+
+            const snap = await getDocs(q);
+
+            const days = [];
+            const pData = [];
+            const aData = [];
+            const lData = [];
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                const dayId = d.toISOString().split('T')[0];
+                days.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+
+                let p = 0, a = 0, l = 0;
+                snap.forEach(doc => {
+                    if (doc.id === dayId) {
+                        const data = doc.data();
+                        p = data.pCount || 0;
+                        a = data.aCount || 0;
+                        l = data.lCount || 0;
+                    }
+                });
+
+                pData.push(p);
+                aData.push(a);
+                lData.push(l);
+            }
+
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            if (weeklyChart) weeklyChart.destroy();
+            weeklyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: days,
+                    datasets: [
+                        { label: 'Present', data: pData, backgroundColor: '#28a745' },
+                        { label: 'Absent', data: aData, backgroundColor: '#c8102e' },
+                        { label: 'Late', data: lData, backgroundColor: '#ffc107' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y} (${calcPercent(ctx.parsed.y)})`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: TOTAL_STUDENTS, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Weekly load error:", e);
+        }
+    }
+
+    // Accurate Nepali date converter
+function toBSDate(gregorianDate) {
+    const bsMonths = [
+        "Baisakh", "Jestha", "Asar", "Shrawan", "Bhadra", "Aswin",
+        "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
+    ];
+
+    const gy = gregorianDate.getFullYear();
+    const gm = gregorianDate.getMonth(); // 0-11
+    const gd = gregorianDate.getDate();
+
+    // This is the most reliable simple conversion used in many Nepali apps
+    let by = gy + 56;
+    let bm, bd;
+
+    if (gm > 3 || (gm === 3 && gd >= 14)) {
+        bm = gm - 3;
+        bd = gd - 13;
+        if (bd <= 0) {
+            bm--;
+            bd += 30; // approximate
+        }
+    } else {
+        bm = gm + 9;
+        bd = gd + 17;
+        if (bd > 32) {
+            bm++;
+            bd -= 32;
+        }
+    }
+
+    if (bm > 12) {
+        bm -= 12;
+        by++;
+    }
+
+    bm = Math.max(1, Math.min(12, bm));
+    bd = Math.max(1, Math.min(32, bd));
+
+    return {
+        day: bd,
+        month: bsMonths[bm - 1],
+        year: by,
+        full: `${bd} ${bsMonths[bm - 1]} ${by}`
+    };
+}
+
+    // Monthly Chart – English numbers + accurate Nepali tooltip
+async function loadMonthlyAttendance() {
+    try {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        const q = query(
+            collection(db, "attendance"),
+            where("timestamp", ">=", firstDay),
+            where("timestamp", "<=", lastDay)
+        );
+
+        const snap = await getDocs(q);
+
+        const daysInMonth = lastDay.getDate();
+        const pData = new Array(daysInMonth).fill(0);
+        const aData = new Array(daysInMonth).fill(0);
+        const lData = new Array(daysInMonth).fill(0);
+
+        snap.forEach(doc => {
+            const d = new Date(doc.id);
+            const idx = d.getDate() - 1;
+            const data = doc.data();
+            pData[idx] = data.pCount || 0;
+            aData[idx] = data.aCount || 0;
+            lData[idx] = data.lCount || 0;
+        });
+
+        // Keep normal numbers on axis (as you wanted)
+        const labels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        if (monthlyChart) monthlyChart.destroy();
+        monthlyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Present', data: pData, backgroundColor: '#28a745' },
+                    { label: 'Absent', data: aData, backgroundColor: '#c8102e' },
+                    { label: 'Late', data: lData, backgroundColor: '#ffc107' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: (tooltipItems) => {
+                                const day = tooltipItems[0].dataIndex + 1;
+                                const bs = toBSDate(new Date(now.getFullYear(), now.getMonth(), day));
+                                return bs.full;   // shows accurate Nepali date on hover
+                            },
+                            label: (ctx) => `${ctx.parsed.y} (${calcPercent(ctx.parsed.y)})`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: TOTAL_STUDENTS, ticks: { stepSize: 1 } },
+                    x: { title: { display: true, text: 'Date' } }
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Monthly load error:", e);
+    }
+}
+    // FIXED Nepali month conversion (accurate enough for school use)
+    function getNepaliMonth(gregorianDate) {
+        const bsMonths = [
+            "Baisakh", "Jestha", "Asar", "Shrawan", "Bhadra", "Aswin",
+            "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
+        ];
+
+        const month = gregorianDate.getMonth(); // 0-11
+        const day = gregorianDate.getDate();
+
+        let index;
+
+        // Nepali New Year ~ April 13-14
+        if (month > 3 || (month === 3 && day >= 14)) {
+            index = month - 3; // Baisakh starts mid-April
+        } else {
+            index = month + 9; // Previous BS year months
+        }
+
+        // Adjust near April transition
+        if (month === 3 && day < 14) {
+            index = 11; // Chaitra
+        }
+
+        return bsMonths[index % 12];
+    }
+
+    // Yearly Chart – now using fixed Nepali months
+    async function loadYearlyAttendance() {
+        try {
+            const now = new Date();
+            const yearStart = new Date(now.getFullYear(), 0, 1);
+            const yearEnd = new Date(now.getFullYear(), 11, 31);
+
+            const q = query(
+                collection(db, "attendance"),
+                where("timestamp", ">=", yearStart),
+                where("timestamp", "<=", yearEnd)
+            );
+
+            const snap = await getDocs(q);
+
+            const months = ["Baisakh", "Jestha", "Asar", "Shrawan", "Bhadra", "Aswin",
+                            "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"];
+            const pData = new Array(12).fill(0);
+            const aData = new Array(12).fill(0);
+            const lData = new Array(12).fill(0);
+
+            snap.forEach(doc => {
+                const date = new Date(doc.id);
+                const monthName = getNepaliMonth(date);
+                const idx = months.indexOf(monthName);
+                if (idx !== -1) {
+                    const data = doc.data();
+                    pData[idx] += data.pCount || 0;
+                    aData[idx] += data.aCount || 0;
+                    lData[idx] += data.lCount || 0;
+                }
+            });
+
+            const ctx = document.getElementById('yearlyChart').getContext('2d');
+            if (yearlyChart) yearlyChart.destroy();
+            yearlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Present', data: pData, backgroundColor: '#28a745' },
+                        { label: 'Absent', data: aData, backgroundColor: '#c8102e' },
+                        { label: 'Late', data: lData, backgroundColor: '#ffc107' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y} (${calcPercent(ctx.parsed.y / TOTAL_STUDENTS)} avg per day)`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Yearly load error:", e);
+        }
+    }
+
+    document.getElementById('btnViewPeriods').addEventListener('click', () => {
+        const weekly = document.getElementById('weeklySection');
+        const monthly = document.getElementById('monthlySection');
+        const yearly = document.getElementById('yearlySection');
+        const btn = document.getElementById('btnViewPeriods');
+
+        if (weekly.style.display === 'none') {
+            weekly.style.display = 'block';
+            monthly.style.display = 'block';
+            yearly.style.display = 'block';
+            btn.textContent = 'Hide Weekly, Monthly and Yearly Attendance';
+            loadWeeklyAttendance();
+            loadYearlyAttendance();
+        } else {
+            weekly.style.display = 'none';
+            monthly.style.display = 'none';
+            yearly.style.display = 'none';
+            btn.textContent = 'View Weekly, Monthly and Yearly Attendance';
+        }
+    });
+
+    // Save + Editable Notify Center
+    document.getElementById('btnSave').addEventListener('click', async () => {
+        const students = [
+            {name: "Ayaan Ansari", id: "att1"},
+            {name: "Abik Thapa", id: "att2"},
+            {name: "Niraj Budhathoki", id: "att3"},
+            {name: "Stulya Chaulagain", id: "att4"},
+            {name: "Prabin Bhandari", id: "att5"},
+            {name: "Dipesh Niraula", id: "att6"},
+            {name: "Rishab Niraula", id: "att7"}
+        ];
+
+        let counts = { present: 0, absent: 0, late: 0 };
+        let absentNames = [];
+        let presentNames = [];
+        let excelRows = [["S.N.", "Name", "Status", "Date"]];
+
+        students.forEach((s, i) => {
+            const selected = document.querySelector(`input[name="${s.id}"]:checked`);
+            const status = selected ? selected.value : "absent";
+            counts[status]++;
+            if (status === "absent") absentNames.push(s.name);
+            if (status !== "absent") presentNames.push(s.name);
+            excelRows.push([i + 1, s.name, status.toUpperCase(), dateId]);
+        });
+
+        try {
+            await setDoc(doc(db, "attendance", dateId), {
+                pCount: counts.present,
+                aCount: counts.absent,
+                lCount: counts.late,
+                absentNames,
+                presentNames,
+                timestamp: new Date()
+            }, { merge: true });
+
+            await loadTodayAttendance();
+            await loadMonthlyAttendance();
+
+            if (document.getElementById('weeklySection').style.display === 'block') {
+                loadWeeklyAttendance();
+                loadYearlyAttendance();
+            }
+
+            // Editable Notify Center
+            const notifyCenter = document.getElementById('notifyCenter');
+            const notifyMessage = document.getElementById('notifyMessage');
+            const notifyList = document.getElementById('notifyList');
+
+            notifyMessage.innerHTML = "Attendance saved successfully to cloud and Excel.";
+            notifyList.innerHTML = "";
+
+            if (absentNames.length > 0) {
+                notifyCenter.style.display = 'block';
+
+                absentNames.forEach(name => {
+                    const defaultMsg = `Dear Parents/Guardian,\n\nYour child was marked Absent today.\n\nName: ${name}\nDate: ${dateId}\nClass: 7 "DG"\n\nPlease inform the class teacher about the reason.\n\nThank you.`;
+
+                    const card = document.createElement('div');
+                    card.className = 'notify-card';
+
+                    card.innerHTML = `
+                        <strong>${name}</strong><br><br>
+                        <textarea rows="6" class="absent-msg">${defaultMsg}</textarea><br><br>
+                        <button class="save-btn" onclick="sendEmail('${name}', this.closest('.notify-card').querySelector('.absent-msg').value)">Send Email</button>
+                    `;
+
+                    notifyList.appendChild(card);
+                });
+            } else {
+                notifyCenter.style.display = 'block';
+                notifyMessage.innerHTML = "Attendance saved successfully. No absentees today.";
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet(excelRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+            XLSX.writeFile(wb, `KMC_7DG_${dateId}.xlsx`);
+
+            setTimeout(() => notifyCenter.style.display = 'none', 90000);
+
+        } catch (e) {
+            console.error(e);
+            alert("Error saving attendance: " + e.message);
+        }
+    });
+
+    // Safe sendEmail
+    window.sendEmail = (name, message) => {
+        const safeMessage = (typeof message === 'string' && message.trim())
+            ? message.trim()
+            : `Dear Parents/Guardian,\n\nYour child was marked Absent today.\n\nName: ${name}\nDate: ${dateId}\nClass: 7 "DG"\n\nPlease inform the class teacher.`;
+
+        const email = studentEmails[name] || "default@school.edu.np";
+        const subject = encodeURIComponent(`Absence Notification – ${name}`);
+        const body = encodeURIComponent(safeMessage);
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+        window.open(gmailUrl, '_blank');
+    };
+
+    // History viewer
+    document.getElementById('btnHistory').addEventListener('click', async () => {
+        const selDate = document.getElementById('historyDate').value;
+        if (!selDate) {
+            alert("Please select a date first!");
+            return;
+        }
+
+        const historyInfo = document.getElementById('historyInfo');
+        const historyResult = document.getElementById('historyResult');
+        const presentList = document.getElementById('history-present-list');
+        const absentList = document.getElementById('history-absent-list');
+
+        historyResult.style.display = 'block';
+
+        try {
+            const docRef = doc(db, "attendance", selDate);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                historyInfo.textContent = `Attendance Record for ${selDate}`;
+
+                presentList.innerHTML = (data.presentNames || []).length
+                    ? data.presentNames.map(n => `<li>${n}</li>`).join('')
+                    : "<li>No one present</li>";
+
+                absentList.innerHTML = (data.absentNames || []).length
+                    ? data.absentNames.map(n => `<li>${n}</li>`).join('')
+                    : "<li>No absentees</li>";
+            } else {
+                historyInfo.textContent = `No attendance record found for ${selDate}`;
+                presentList.innerHTML = absentList.innerHTML = "<li>No data</li>";
+            }
+        } catch (e) {
+            console.error("History load error:", e);
+            historyInfo.textContent = "Error loading history.";
+        }
+    });
+
+    // Initial load
+    loadTodayAttendance();
+    loadMonthlyAttendance();
+</script>
+</body>
+</html>

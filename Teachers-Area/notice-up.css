@@ -1,0 +1,351 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-header {
+    background: #003087;
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo .kmc {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.logo .school {
+    font-size: 2.2rem;
+    color: #ffcc00;
+    font-weight: 700;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.main-nav {
+    background: #0d1b46;
+    padding: 14px 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 20px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #ffcc00;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+.main-content {
+    flex: 1;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 30px;
+    width: 100%;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.welcome-section h1 {
+    color: #003087;
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.welcome-section p {
+    color: #555;
+    font-size: 1.2rem;
+}
+
+.notice-form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 50px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border-left: 6px solid #c8102e;
+}
+
+.notice-form-section h2 {
+    color: #003087;
+    margin-bottom: 30px;
+    font-size: 1.9rem;
+}
+
+#noticeForm label {
+    display: block;
+    margin: 20px 0 10px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+#noticeForm input,
+#noticeForm textarea,
+#noticeForm select {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    transition: border-color 0.2s;
+}
+
+#noticeForm textarea {
+    resize: vertical;
+    min-height: 160px;
+}
+
+.form-actions {
+    margin-top: 35px;
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.save-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 14px 50px;
+    border-radius: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.save-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 14px 50px;
+    border-radius: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #5a6268;
+}
+
+.error {
+    color: #c8102e;
+    font-weight: 600;
+    margin-top: 15px;
+    text-align: center;
+    min-height: 24px;
+}
+
+.notices-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 35px;
+}
+
+.notice-card {
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border-left: 6px solid #0044cc;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.notice-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.notice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.notice-tag {
+    background: #0044cc;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.notice-card h2 {
+    color: #003087;
+    margin-bottom: 18px;
+    font-size: 1.7rem;
+}
+
+.notice-content {
+    margin-bottom: 25px;
+    color: #444;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.notice-footer {
+    font-size: 0.95rem;
+    color: #777;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+.notice-actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.edit-btn, .delete-btn {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background: #0044cc;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #003087;
+}
+
+.delete-btn {
+    background: #c8102e;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #a00d24;
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 992px) {
+    .notices-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .main-nav {
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .welcome-section h1 {
+        font-size: 2rem;
+    }
+
+    .notice-form-section {
+        padding: 30px 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

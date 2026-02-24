@@ -1,0 +1,311 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #e6f0ff, #f8f9fa);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-header {
+    background: #003087;
+    color: white;
+    padding: 14px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.about-btn {
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    color: #003087;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255,193,7,0.35);
+}
+
+.about-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,193,7,0.5);
+}
+
+.main-content.role-selection {
+    flex: 1;
+    text-align: center;
+    padding: 120px 20px 200px;
+}
+
+.role-selection h1 {
+    font-size: 3.4rem;
+    color: #003087;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+.role-selection p {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 80px;
+}
+
+.role-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    flex-wrap: wrap;
+}
+
+.role-btn {
+    display: inline-block;
+    padding: 45px 110px;
+    font-size: 2.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    border-radius: 20px;
+    transition: all 0.35s ease;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    min-width: 320px;
+    text-align: center;
+}
+
+.role-btn.student {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.role-btn.student:hover {
+    background: linear-gradient(135deg, #218838, #1e7e34);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(40,167,69,0.35);
+}
+
+.role-btn.teacher {
+    background: linear-gradient(135deg, #003087, #0044cc);
+}
+
+.role-btn.teacher:hover {
+    background: linear-gradient(135deg, #00205b, #003087);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0,48,135,0.35);
+}
+
+.main-footer {
+    background: #003087;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1rem;
+    margin-top: auto;
+}
+
+/* About Section Styles */
+.about-section {
+    background: linear-gradient(to bottom, #f8f9fa, #e6f0ff);
+    padding: 80px 20px;
+    margin-top: 50px;
+}
+
+.about-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 2.8rem;
+    color: #003087;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.about-tagline {
+    font-size: 1.4rem;
+    color: #666;
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+.about-content {
+    max-width: 800px;
+    margin: 0 auto 50px;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.about-content strong {
+    color: #003087;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
+
+.feature-card h3 {
+    color: #003087;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ffc107;
+    padding-bottom: 10px;
+}
+
+.feature-card ul {
+    list-style: none;
+}
+
+.feature-card li {
+    padding: 8px 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.about-contact {
+    background: #003087;
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    margin-top: 30px;
+}
+
+.about-contact h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #ffc107;
+}
+
+.about-contact p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .contact-info {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .role-selection {
+        padding: 80px 15px 160px;
+    }
+
+    .role-selection h1 {
+        font-size: 2.6rem;
+    }
+
+    .role-selection p {
+        font-size: 1.3rem;
+    }
+
+    .role-buttons {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .role-btn {
+        padding: 35px 80px;
+        font-size: 2.2rem;
+    }
+
+    .about-section {
+        padding: 50px 15px;
+    }
+
+    .about-section h2 {
+        font-size: 2rem;
+    }
+
+    .about-tagline {
+        font-size: 1.1rem;
+    }
+
+    .about-content {
+        font-size: 1rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card {
+        padding: 20px;
+    }
+
+    .about-contact {
+        padding: 25px;
+    }
+
+    .about-contact h3 {
+        font-size: 1.5rem;
+    }
+}

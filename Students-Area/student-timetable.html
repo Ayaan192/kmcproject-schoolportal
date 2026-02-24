@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School – Student Timetable | Class 7 "DG"</title>
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link rel="stylesheet" href="student-timetable.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+                <span class="kmc">KMC</span> <span class="school">SCHOOL</span>
+            </div>
+            <div class="contact-info">
+                <div>info@kmcschool.edu.np</div>
+                <div>01-4792016, 4792906</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <a href="student-dashboard.html" class="nav-item">Dashboard</a>
+        <a href="student-timetable.html" class="nav-item active">Timetable</a>
+        <a href="student-notice.html" class="nav-item">Notices</a>
+        <a href="student-homework.html" class="nav-item">Homework</a>
+        <a href="parents-complain.html" class="nav-item">Parents Complaint</a>
+        <a class="nav-item" href="message.html">Class Chat</a>
+        <a href="student-login.html" class="nav-item logout">Logout</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Class 7 "DG" Timetable</h1>
+            <p>View your daily schedule and current class status below.</p>
+            
+            <p class="today-message">
+                Today is <span id="today-day">...</span> • Time: <span id="current-time">...</span>
+            </p>
+            <div id="status-message" class="period-status">Loading current schedule...</div>
+        </div>
+
+        <section class="timetable-section">
+            <table class="timetable-table" id="timetable">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>1st</th><th>2nd</th><th>3rd</th><th>4th</th><th>5th</th><th>6th</th><th>7th</th><th>8th</th>
+                    </tr>
+                </thead>
+                <tbody id="timetable-body">
+                    <tr><td colspan="9" style="text-align:center; padding:50px;">Fetching latest timetable from school server...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <p>© KMC School, Buddhanagar, Kathmandu • All rights reserved • 2026</p>
+    </footer>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg...", 
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Period Timing Logic
+        const schedule = [
+            { start: 930,  end: 1015, name: "1st Period", col: 1 },
+            { start: 1015, end: 1100, name: "2nd Period", col: 2 },
+            { start: 1100, end: 1145, name: "3rd Period", col: 3 },
+            { start: 1145, end: 1230, name: "4th Period", col: 4 },
+            { start: 1230, end: 1315, name: "Lunch Break", col: null },
+            { start: 1315, end: 1400, name: "5th Period", col: 5 },
+            { start: 1400, end: 1445, name: "6th Period", col: 6 },
+            { start: 1445, end: 1530, name: "7th Period", col: 7 },
+            { start: 1530, end: 1615, name: "8th Period", col: 8 }
+        ];
+
+        async function loadTimetable() {
+            const docSnap = await getDoc(doc(db, "settings", "timetable_7dg"));
+            if (docSnap.exists()) {
+                const cleanHTML = docSnap.data().tableHTML.replace(/contenteditable="true"/g, 'contenteditable="false"');
+                document.getElementById('timetable-body').innerHTML = cleanHTML;
+                updateLiveStatus();
+            }
+        }
+
+        function updateLiveStatus() {
+            const now = new Date();
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayIdx = now.getDay();
+            const dayName = dayNames[dayIdx];
+
+            document.getElementById("today-day").textContent = dayName;
+            document.getElementById("current-time").textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            const currentTime = now.getHours() * 100 + now.getMinutes();
+            let statusEl = document.getElementById("status-message");
+
+            // Reset highlights
+            document.querySelectorAll('td').forEach(td => {
+                td.classList.remove('active-period');
+            });
+
+            if (dayName === "Saturday") {
+                statusEl.innerHTML = "🏖️ Today is a Holiday!";
+                return;
+            }
+
+            const current = schedule.find(p => currentTime >= p.start && currentTime < p.end);
+
+            if (currentTime < 930) {
+                statusEl.innerHTML = "🕒 School hasn't started yet.";
+            } else if (currentTime >= 1615) {
+                statusEl.innerHTML = "🏠 School is over for today.";
+            } else if (current) {
+                statusEl.innerHTML = `📖 Current: <strong>${current.name}</strong>`;
+                if (current.col !== null) highlightCell(dayIdx, current.col);
+            }
+        }
+
+        function highlightCell(rowIdx, colIdx) {
+            const rows = document.getElementById("timetable-body").rows;
+            const targetRow = rows[rowIdx]; 
+            if (targetRow) {
+                const cell = targetRow.cells[colIdx];
+                if (cell) cell.classList.add('active-period');
+            }
+        }
+
+        window.addEventListener('load', loadTimetable);
+        setInterval(updateLiveStatus, 60000);
+    </script>
+</body>
+</html>

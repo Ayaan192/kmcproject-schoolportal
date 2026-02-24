@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC School |Calendar</title>
+    <link rel="icon" href="kmc logo.png">
+    <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <aside class="event-sidebar">
+            <div class="sidebar-header">
+                <img src="kmc logo.png" alt="KMC Logo">
+                <div class="header-text">
+                    <h2>Events</h2>
+                    <p id="targetMonth">Baisakh 2082</p>
+                </div>
+            </div>
+            <ul id="eventList"></ul>
+            <div class="sidebar-footer">
+                <a href="student-dashboard.html" class="dashboard-link">← Dashboard</a>
+            </div>
+        </aside>
+
+        <main class="calendar-section">
+            <header class="calendar-nav">
+                <button class="nav-btn" onclick="changeMonth(-1)">PREV</button>
+                <h1 id="monthTitle">BAISAKH</h1>
+                <button class="nav-btn" onclick="changeMonth(1)">NEXT</button>
+            </header>
+
+            <div class="calendar-container">
+                <div class="weekday-header">
+                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div class="sat-head">S</div>
+                </div>
+                <div id="daysGrid" class="days-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const calendarData = [
+            { name: "Baisakh", days: 31, startDay: 1, events: { 18: "Labour Day", 29: "Buddha Jayanti" }, exams: {}, info: "Session Begins 8th" },
+            { name: "Jestha", days: 31, startDay: 4, events: { 15: "Ganatantra Diwas" }, exams: {} },
+            { name: "Ashad", days: 31, startDay: 6, events: { 15: "Dahi Chiura Khane Din" }, exams: { 1: "1st Mid-Term Starts", 4: "Ends" } },
+            { name: "Saun", days: 32, startDay: 2, events: { 24: "Janai Purnima", 25: "Gaijatra", 31: "Krishna Janmasthami" }, exams: { 15: "First Term Starts", 23: "Ends" } },
+            { name: "Bhadau", days: 31, startDay: 5, events: { 7: "Fathers' Day", 10: "Teej", 21: "Indra Jatra" }, exams: {} },
+            { name: "Asoj", days: 30, startDay: 0, events: { 3: "Constitution Day", 6: "Dashain Vacation" }, exams: { 28: "2nd Mid Term Starts" } },
+            { name: "Kartik", days: 30, startDay: 2, events: { 3: "Tihar Begins", 10: "Chhath" }, exams: {} },
+            { name: "Mangsir", days: 29, startDay: 4, events: { 18: "Yomari Punhi" }, exams: { 14: "Second Term Starts", 23: "Ends" } },
+            { name: "Poush", days: 30, startDay: 6, events: { 10: "Christmas", 15: "Tamu Loshar" }, exams: {} },
+            { name: "Magh", days: 29, startDay: 2, events: { 1: "Maghe Sankranti", 15: "Sonam Loshar" }, exams: { 14: "3rd Mid-Term Starts", 19: "Ends" } },
+            { name: "Falgun", days: 30, startDay: 4, events: { 3: "Mahashivaratri", 18: "Holi" }, exams: {} },
+            { name: "Chaitra", days: 30, startDay: 6, events: { 4: "Ghode Jatra" }, exams: { 5: "Final Exam Starts", 13: "Ends" } }
+        ];
+
+        let currentIndex = 0;
+
+        function renderCalendar() {
+            const data = calendarData[currentIndex];
+            document.getElementById('monthTitle').innerText = data.name.toUpperCase();
+            document.getElementById('targetMonth').innerText = data.name + " 2082";
+            const grid = document.getElementById('daysGrid');
+            const list = document.getElementById('eventList');
+            grid.innerHTML = '';
+            list.innerHTML = '';
+
+            for (let i = 0; i < data.startDay; i++) {
+                grid.innerHTML += `<div class="day-cell empty"></div>`;
+            }
+
+            for (let i = 1; i <= data.days; i++) {
+                const isSat = (data.startDay + i - 1) % 7 === 6;
+                const h = data.events[i];
+                const e = data.exams[i];
+                let cls = 'day-cell';
+                if (isSat || h) cls += ' holiday';
+                if (e) cls += ' exam';
+
+                grid.innerHTML += `
+                    <div class="${cls}">
+                        <span class="day-number">${i}</span>
+                        <div class="indicator-container">
+                            ${(isSat || h) ? '<span class="dot red"></span>' : ''}
+                            ${e ? '<span class="dot blue"></span>' : ''}
+                        </div>
+                    </div>`;
+
+                if (h) list.innerHTML += `<li><span class="date-tag holiday-tag">${i}</span> ${h}</li>`;
+                if (isSat) list.innerHTML += `<li><span class="date-tag sat-tag">${i}</span> Saturday</li>`;
+                if (e) list.innerHTML += `<li><span class="date-tag exam-tag">${i}</span> ${e}</li>`;
+            }
+        }
+
+        function changeMonth(dir) {
+            currentIndex += dir;
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex > 11) currentIndex = 11;
+            renderCalendar();
+        }
+
+        renderCalendar();
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC Portal | Teacher Chat Management</title>
+    <link rel="stylesheet" href="teacherchats.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-links-center">
+            <a class="nav-item" href="dashboard.html">Dashboard</a>
+            <a class="nav-item" href="attendence.html">Attendance</a>
+            <a class="nav-item" href="timetable.html">Timetable</a>
+            <a class="nav-item" href="notice.html">Notices</a>
+            <a class="nav-item" href="teacher-homework.html">Homework</a>
+            <a class="nav-item" href="teacher-feedback.html">Complaints</a>
+            <a class="nav-item active" href="teacherchats.html">Chats</a>
+            <a class="nav-item logout" href="teacher-login.html" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="chat-container">
+            <!-- Left Sidebar: Student List & Private Messages -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-users"></i> Students</h3>
+                    <button class="refresh-btn" onclick="loadStudents()">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="studentSearch" placeholder="Search student..." onkeyup="filterStudents()">
+                </div>
+                <div class="student-list" id="studentList">
+                    <!-- Students will be loaded here -->
+                </div>
+                
+                <div class="sidebar-header private-header">
+                    <h3><i class="fa-solid fa-envelope"></i> Direct Messages</h3>
+                </div>
+                <div class="dm-list" id="dmList">
+                    <!-- Direct messages will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="header-left">
+                        <h2 id="chatTitle"><i class="fa-solid fa-comments"></i> All Student Messages</h2>
+                    </div>
+                    <div class="header-actions">
+                        <button class="view-toggle active" id="allMessagesBtn" onclick="switchView('all')">
+                            <i class="fa-solid fa-list"></i> All
+                        </button>
+                        <button class="view-toggle" id="privateBtn" onclick="switchView('private')">
+                            <i class="fa-solid fa-lock"></i> Private
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatBox">
+                    <!-- Messages will be loaded here -->
+                    <div class="empty-state">
+                        <i class="fa-solid fa-comments"></i>
+                        <p>Select a student to view messages or check all messages below</p>
+                    </div>
+                </div>
+
+                <!-- Reply/DM Input Area -->
+                <div class="input-area" id="inputArea">
+                    <div class="reply-indicator" id="replyIndicator" style="display: none;">
+                        <span>Replying to: <strong id="replyToName"></strong></span>
+                        <button onclick="cancelReply()"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    <div class="dm-indicator" id="dmIndicator" style="display: none;">
+                        <span><i class="fa-solid fa-lock"></i> Private message to: <strong id="dmToName"></strong></span>
+                        <button onclick="cancelDM()"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <button class="dm-quick-btn" onclick="openDMSelect('')" title="Send Private Message">
+                        <i class="fa-solid fa-envelope"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reply Modal -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reply to Message</h3>
+                <button class="close-modal" onclick="closeReplyModal()">&times;</button>
+            </div>
+            <div class="original-message" id="originalMessage"></div>
+            <textarea id="replyText" placeholder="Type your reply..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReplyModal()">Cancel</button>
+                <button class="btn-send" onclick="sendReply()">Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direct Message Modal -->
+    <div class="modal" id="dmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Private Message</h3>
+                <button class="close-modal" onclick="closeDMModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>To:</label>
+                <select id="dmStudentSelect">
+                    <option value="">Select Student</option>
+                </select>
+            </div>
+            <textarea id="dmText" placeholder="Type your private message..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeDMModal()">Cancel</button>
+                <button class="btn-send" onclick="sendDirectMessage()">Send Private Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, where, getDocs } 
+               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        // Initialize Firebase
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log("Firebase Connected");
+        } catch (error) {
+            console.error("Firebase Error:", error);
+        }
+
+        // Teacher Identity - show as Class Teacher
+        const teacherName = localStorage.getItem('teacherName') || "Class Teacher";
+        const teacherClass = localStorage.getItem('teacherClass') || "7 DG";
+        
+        // State
+        let currentView = 'all';
+        let selectedStudent = null;
+        let replyingTo = null;
+        let dmToStudent = null;
+        let allMessages = [];
+        let allStudents = [];
+
+        // Collections
+        const groupMessagesCol = collection(db, "group_messages");
+        const privateMessagesCol = collection(db, "private_messages");
+
+        // Load all students from messages
+        window.loadStudents = async () => {
+            const studentSet = new Set();
+            const q = query(groupMessagesCol, orderBy("createdAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                studentSet.clear();
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.sender && data.sender !== "KMC AI BOT") {
+                        studentSet.add(data.sender);
+                    }
+                });
+                
+                allStudents = Array.from(studentSet);
+                renderStudentList(allStudents);
+            });
+        };
+
+        // Render student list
+        function renderStudentList(students) {
+            const list = document.getElementById('studentList');
+            list.innerHTML = '';
+            
+            students.forEach(student => {
+                const div = document.createElement('div');
+                div.className = 'student-item';
+                div.onclick = () => selectStudent(student);
+                div.innerHTML = `
+                    <div class="student-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="student-info">
+                        <span class="student-name">${student}</span>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // Filter students
+        window.filterStudents = () => {
+            const search = document.getElementById('studentSearch').value.toLowerCase();
+            const filtered = allStudents.filter(s => s.toLowerCase().includes(search));
+            renderStudentList(filtered);
+        };
+
+        // Select student
+        function selectStudent(student) {
+            selectedStudent = student;
+            document.getElementById('chatTitle').innerHTML = `<i class="fa-solid fa-user"></i> ${student}'s Messages`;
+            loadStudentMessages(student);
+        }
+
+        // Switch view
+        window.switchView = (view) => {
+            currentView = view;
+            document.querySelectorAll('.view-toggle').forEach(btn => btn.classList.remove('active'));
+            
+            if (view === 'all') {
+                document.getElementById('allMessagesBtn').classList.add('active');
+                document.getElementById('chatTitle').innerHTML = `<i class="fa-solid fa-comments"></i> All Student Messages`;
+                selectedStudent = null;
+                loadAllMessages();
+            } else {
+                document.getElementById('privateBtn').classList.add('active');
+                document.getElementById('chatTitle').innerHTML = `<i class="fa-solid fa-lock"></i> Private Messages`;
+                loadPrivateMessages();
+            }
+            
+            updateToggleButtons();
+        };
+
+        function updateToggleButtons() {
+            document.getElementById('allMessagesBtn').classList.toggle('active', currentView === 'all');
+            document.getElementById('privateBtn').classList.toggle('active', currentView === 'private');
+        }
+
+        // Load all group messages
+        function loadAllMessages() {
+            const q = query(groupMessagesCol, orderBy("createdAt", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatBox = document.getElementById('chatBox');
+                
+                // Only clear if this is first load or view switch
+                if (currentView === 'all') {
+                    chatBox.innerHTML = '';
+                }
+                allMessages = [];
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allMessages.push({ id: doc.id, ...data });
+                    
+                    // Check if message already rendered
+                    const existingMsg = document.getElementById('msg-' + doc.id);
+                    if (!existingMsg) {
+                        renderMessage(data, doc.id);
+                    }
+                });
+                
+                if (chatBox.children.length === 0) {
+                    chatBox.innerHTML = `<div class="empty-state">
+                        <i class="fa-solid fa-comments"></i>
+                        <p>No messages yet. Students will appear here when they send messages.</p>
+                    </div>`;
+                }
+            });
+        }
+
+        // Load student-specific messages
+        function loadStudentMessages(student) {
+            const q = query(groupMessagesCol, orderBy("createdAt", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.sender === student) {
+                        renderMessage(data, doc.id);
+                    }
+                });
+                
+                if (chatBox.children.length === 0) {
+                    chatBox.innerHTML = `<div class="empty-state">
+                        <i class="fa-solid fa-user"></i>
+                        <p>No messages from ${student}</p>
+                    </div>`;
+                }
+            });
+        }
+
+        // Load private messages
+        function loadPrivateMessages() {
+            const q = query(privateMessagesCol, orderBy("createdAt", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+                let hasMessages = false;
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Show messages sent to or from teacher
+                    if (data.to === teacherName || data.to === "Class Teacher" || data.from === teacherName || data.from === "Class Teacher") {
+                        hasMessages = true;
+                        renderPrivateMessage(data, doc.id);
+                    }
+                });
+                
+                if (!hasMessages) {
+                    chatBox.innerHTML = `<div class="empty-state">
+                        <i class="fa-solid fa-lock"></i>
+                        <p>No private messages yet</p>
+                        <button class="view-toggle active" onclick="document.getElementById('dmModal').style.display='flex'" style="margin-top:10px;">
+                            <i class="fa-solid fa-plus"></i> Send Private Message
+                        </button>
+                    </div>`;
+                }
+            });
+        }
+
+        // Render group message
+        function renderMessage(data, msgId) {
+            const chatBox = document.getElementById('chatBox');
+            const isMe = data.sender === teacherName || data.sender === "Class Teacher";
+            const isBot = data.sender === "KMC AI BOT";
+            
+            const time = data.createdAt ? data.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
+            
+            const div = document.createElement('div');
+            div.id = 'msg-' + msgId;
+            div.className = `msg ${isMe ? 'sent' : 'received'} ${isBot ? 'bot-msg' : ''}`;
+            
+            // Check if this message has a reply
+            const replyHtml = data.replyTo ? `<div class="msg-reply-to">↩️ Replying to ${data.replyTo}</div>` : '';
+            
+            div.innerHTML = `
+                ${replyHtml}
+                <span class="msg-info">${data.sender} <span class="msg-class">${data.class || ''}</span></span>
+                <div class="msg-text">${data.text}</div>
+                <span class="msg-time">${time}</span>
+                <div class="msg-actions">
+                    <button class="action-btn reply-btn" onclick="openReplyModal('${data.sender}', '${msgId}')" title="Reply">
+                        <i class="fa-solid fa-reply"></i>
+                    </button>
+                    <button class="action-btn dm-btn" onclick="openDMSelect('${data.sender}')" title="Send Private Message">
+                        <i class="fa-solid fa-envelope"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteMessage('${msgId}')" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Render private message
+        function renderPrivateMessage(data, msgId) {
+            const chatBox = document.getElementById('chatBox');
+            const isMe = data.from === teacherName || data.from === "Class Teacher";
+            
+            const time = data.createdAt ? data.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
+            
+            const div = document.createElement('div');
+            div.className = `msg private-msg ${isMe ? 'sent' : 'received'}`;
+            
+            div.innerHTML = `
+                <span class="msg-info">
+                    <i class="fa-solid fa-lock"></i> 
+                    ${isMe ? `To: ${data.to}` : `From: ${data.from}`}
+                </span>
+                <div class="msg-text">${data.text}</div>
+                <span class="msg-time">${time}</span>
+                <div class="msg-actions">
+                    ${isMe ? `<button class="action-btn delete-btn" onclick="deleteMessage('${msgId}', 'private')" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>` : `<button class="action-btn dm-btn" onclick="openDMSelect('${data.from}')" title="Reply Privately">
+                        <i class="fa-solid fa-reply"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteMessage('${msgId}', 'private')" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>`}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Open reply modal
+        window.openReplyModal = (sender, msgId) => {
+            replyingTo = { sender, msgId };
+            document.getElementById('replyToName').textContent = sender;
+            document.getElementById('replyModal').style.display = 'flex';
+            
+            // Find the original message
+            const msg = allMessages.find(m => m.id === msgId);
+            if (msg) {
+                document.getElementById('originalMessage').innerHTML = `
+                    <strong>${msg.sender}:</strong> ${msg.text}
+                `;
+            }
+        };
+
+        window.closeReplyModal = () => {
+            document.getElementById('replyModal').style.display = 'none';
+            document.getElementById('replyText').value = '';
+            replyingTo = null;
+        };
+
+        // Send reply
+        window.sendReply = async () => {
+            const replyText = document.getElementById('replyText').value.trim();
+            if (replyText && replyingTo) {
+                try {
+                    await addDoc(groupMessagesCol, {
+                        text: replyText,
+                        sender: "Class Teacher",
+                        class: teacherClass,
+                        replyTo: replyingTo.sender,
+                        isReply: true,
+                        createdAt: serverTimestamp()
+                    });
+                    closeReplyModal();
+                } catch (e) {
+                    alert("Error sending reply: " + e.message);
+                }
+            }
+        };
+
+        // Open DM modal with student selected
+        window.openDMSelect = (student) => {
+            if (!student || student === "Class Teacher") {
+                // Open empty DM modal for any student
+                const select = document.getElementById('dmStudentSelect');
+                let options = '<option value="">Select Student</option>';
+                allStudents.forEach(s => {
+                    options += `<option value="${s}">${s}</option>`;
+                });
+                select.innerHTML = options;
+            } else {
+                const select = document.getElementById('dmStudentSelect');
+                let options = `<option value="${student}">${student}</option>`;
+                allStudents.forEach(s => {
+                    if (s !== student) {
+                        options += `<option value="${s}">${s}</option>`;
+                    }
+                });
+                select.innerHTML = options;
+            }
+            document.getElementById('dmModal').style.display = 'flex';
+        };
+
+        window.closeDMModal = () => {
+            document.getElementById('dmModal').style.display = 'none';
+            document.getElementById('dmText').value = '';
+            dmToStudent = null;
+        };
+
+        // Send direct/private message
+        window.sendDirectMessage = async () => {
+            const dmText = document.getElementById('dmText').value.trim();
+            const toStudent = document.getElementById('dmStudentSelect').value;
+            
+            if (dmText === "") {
+                alert("Please enter a message");
+                return;
+            }
+            if (toStudent === "") {
+                alert("Please select a student");
+                return;
+            }
+            
+            if (dmText && toStudent) {
+                try {
+                    await addDoc(privateMessagesCol, {
+                        text: dmText,
+                        from: "Class Teacher",
+                        to: toStudent,
+                        createdAt: serverTimestamp()
+                    });
+                    closeDMModal();
+                    // Switch to private view to see the message
+                    switchView('private');
+                } catch (e) {
+                    alert("Error sending message: " + e.message);
+                }
+            }
+        };
+
+        // Inline reply
+        window.cancelReply = () => {
+            replyingTo = null;
+            document.getElementById('replyIndicator').style.display = 'none';
+        };
+
+        window.cancelDM = () => {
+            dmToStudent = null;
+            document.getElementById('dmIndicator').style.display = 'none';
+        };
+
+        // Delete message
+        window.deleteMessage = async (msgId, type = 'group') => {
+            if (confirm('Are you sure you want to delete this message?')) {
+                try {
+                    const col = type === 'private' ? privateMessagesCol : groupMessagesCol;
+                    await deleteDoc(doc(db, type === 'private' ? "private_messages" : "group_messages", msgId));
+                } catch (e) {
+                    alert("Error deleting message: " + e.message);
+                }
+            }
+        };
+
+        // Send message (for group chat)
+        const sendMsg = async () => {
+            const input = document.getElementById('messageInput');
+            const val = input.value.trim();
+            
+            if (val !== "") {
+                try {
+                    if (currentView === 'private' && selectedStudent) {
+                        // Send private message inline
+                        await addDoc(privateMessagesCol, {
+                            text: val,
+                            from: "Class Teacher",
+                            to: selectedStudent,
+                            createdAt: serverTimestamp()
+                        });
+                    } else {
+                        // Send group message
+                        await addDoc(groupMessagesCol, {
+                            text: val,
+                            sender: "Class Teacher",
+                            class: teacherClass,
+                            replyTo: replyingTo ? replyingTo.sender : null,
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                    input.value = "";
+                    cancelReply();
+                    cancelDM();
+                } catch (e) {
+                    alert("Error sending: " + e.message);
+                }
+            }
+        };
+
+        document.getElementById('sendBtn').addEventListener('click', sendMsg);
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMsg();
+        });
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllMessages();
+            loadStudents();
+            loadPrivateMessages();
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.clear();
+            window.location.href = 'teacher-login.html';
+        };
+    </script>
+</body>
+</html>

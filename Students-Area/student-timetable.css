@@ -1,0 +1,272 @@
+/* --- KMC SCHOOL PORTAL GLOBAL STYLES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --kmc-blue-dark:  #003087;    /* Deep Navy */
+    --kmc-blue:       #0044cc;    /* Primary Blue */
+    --kmc-red:        #c8102e;    /* Crimson Red */
+    --kmc-gold:       #ffcc00;    /* Signature Gold */
+    --light-bg:       #f8f9fa;    /* Page Background */
+    --white:          #ffffff;
+    --transition:     all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    color: #333;
+    line-height: 1.6;
+}
+
+/* --- HEADER SECTION --- */
+.main-header {
+    background: var(--kmc-blue-dark);
+    color: white;
+    padding: 5px 30px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.header-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 2.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 90px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+    margin-right: 16px;
+}
+
+.logo .kmc { color: white; }
+.logo .school { color: var(--kmc-gold); }
+
+.contact-info {
+    font-size: 0.95rem;
+    text-align: right;
+    color: white;
+}
+
+/* --- NAVIGATION BAR --- */
+.main-nav {
+    background: #0d1b46;
+    padding: 14px 0;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-item {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0 25px;
+    padding: 10px 12px;
+    transition: var(--transition);
+}
+
+.nav-item:hover, 
+.nav-item.active {
+    color: var(--kmc-gold);
+    background: rgba(255,255,255,0.08);
+    border-radius: 5px;
+}
+
+.logout {
+    color: #ff9999 !important;
+}
+
+/* --- MAIN CONTENT LAYOUT --- */
+.main-content {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 25px;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 25px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.welcome-section h1 {
+    color: var(--kmc-blue);
+    font-size: 2.3rem;
+    margin-bottom: 10px;
+}
+
+/* --- TIMETABLE TABLE --- */
+.timetable-section {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--kmc-red);
+    overflow-x: auto;
+}
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1.05rem;
+}
+
+.timetable-table th,
+.timetable-table td {
+    border: 1px solid #ddd;
+    padding: 14px 10px;
+    text-align: center;
+}
+
+.timetable-table th {
+    background: var(--kmc-blue);
+    color: white;
+    font-weight: 600;
+}
+
+.timetable-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.day-label {
+    font-weight: bold;
+    background: #f1f1f1 !important;
+    color: var(--kmc-blue-dark);
+}
+
+/* --- STATUS & MESSAGES --- */
+.today-message {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--kmc-blue-dark);
+    margin: 15px 0;
+    text-align: center;
+}
+
+.period-status {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--kmc-red);
+    background: #fff3cd;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 700px;
+    border: 1px solid #ffeeba;
+}
+
+.holiday-row {
+    background-color: #fff3cd !important;
+    font-weight: bold;
+    color: #856404;
+}
+
+/* --- ACTIVE PERIOD HIGHLIGHT (Student View) --- */
+.active-period {
+    background-color: var(--kmc-gold) !important;
+    color: var(--kmc-blue-dark) !important;
+    font-weight: bold;
+    border: 2px solid var(--kmc-red) !important;
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+    z-index: 5;
+}
+
+/* --- ADMIN EDITING STYLES --- */
+[contenteditable="true"]:hover {
+    background-color: #fff9e6 !important;
+    outline: 2px dashed var(--kmc-red);
+    cursor: cell;
+}
+
+[contenteditable="true"]:focus {
+    background-color: #fff !important;
+    outline: 2px solid var(--kmc-blue-dark);
+    box-shadow: 0 0 8px rgba(0, 48, 135, 0.2);
+}
+
+/* --- SYNC BUTTON (BOTTOM) --- */
+.sync-container {
+    margin-top: 30px;
+    text-align: center;
+    border-top: 2px solid #eee;
+    padding-top: 20px;
+}
+
+.sync-btn-bottom {
+    background: var(--kmc-blue-dark);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(0, 48, 135, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sync-btn-bottom:hover {
+    background: var(--kmc-red);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(200, 16, 46, 0.4);
+}
+
+.last-updated {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* --- FOOTER --- */
+.main-footer {
+    background: var(--kmc-blue-dark);
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 60px;
+    font-size: 0.95rem;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 992px) {
+    .nav-item { margin: 0 10px; font-size: 1rem; }
+    .logo-img { height: 70px; }
+}
+
+@media (max-width: 768px) {
+    .header-container { flex-direction: column; text-align: center; }
+    .contact-info { text-align: center; }
+    .nav-item { display: inline-block; margin: 5px; font-size: 0.9rem; }
+    .timetable-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .welcome-section h1 { font-size: 1.8rem; }
+}

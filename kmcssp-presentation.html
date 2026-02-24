@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC SSP - School Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a1628;
+            --secondary: #1e3a5f;
+            --accent: #c9a227;
+            --accent-light: #e8d48a;
+            --accent-glow: rgba(201, 162, 39, 0.4);
+            --text-light: #f8f9fa;
+            --text-muted: #a0aec0;
+            --gradient-1: linear-gradient(135deg, #0a1628 0%, #1e3a5f 50%, #0f2744 100%);
+            --gradient-2: linear-gradient(135deg, #c9a227 0%, #e8d48a 50%, #c9a227 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Section Base */
+        section {
+            min-height: 100vh;
+            padding: 100px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* Background Effects */
+        .bg-effect {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .bg-gold {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(201, 162, 39, 0.12) 0%, transparent 70%);
+        }
+
+        .bg-blue {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(30, 58, 95, 0.4) 0%, transparent 70%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 5.5rem;
+            font-weight: 700;
+            line-height: 1.05;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-light) 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px var(--accent-glow);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            font-weight: 600;
+            margin-bottom: 70px;
+            color: var(--accent);
+            text-align: center;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-2);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        h4 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 18px;
+        }
+
+        p {
+            font-size: 1.3rem;
+            line-height: 1.85;
+            color: var(--text-muted);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 500;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        /* Logo */
+        .logo-container {
+            margin-bottom: 50px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .logo-container img {
+            width: 220px;
+            height: auto;
+            filter: drop-shadow(0 20px 50px rgba(201, 162, 39, 0.45));
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient-1);
+            text-align: center;
+        }
+
+        .hero .bg-effect.gold {
+            top: -200px;
+            right: -200px;
+        }
+
+        .hero .bg-effect.blue {
+            bottom: -150px;
+            left: -150px;
+        }
+
+        .hero p {
+            max-width: 750px;
+            margin: 0 auto;
+            font-size: 1.5rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(201, 162, 39, 0.15);
+            border: 2px solid var(--accent);
+            border-radius: 50px;
+            margin-top: 35px;
+            font-size: 1.1rem;
+            color: var(--accent-light);
+            letter-spacing: 2px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .scroll-arrow {
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scroll-arrow::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(12px); }
+        }
+
+        @keyframes scroll {
+            0% { opacity: 1; top: 8px; }
+            100% { opacity: 0; top: 32px; }
+        }
+
+        /* Overview Section */
+        .overview {
+            background: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            margin-bottom: 70px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 45px 25px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .overview-description {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            font-size: 1.35rem;
+            line-height: 2;
+        }
+
+        /* Features Section */
+        .features {
+            background: linear-gradient(180deg, var(--primary) 0%, #0d1f35 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 42px 32px;
+            text-align: left;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* GOLD LINE - Always visible, no cursor needed */
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleY(1.1);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 26px;
+            box-shadow: 0 8px 25px var(--accent-glow);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card p {
+            font-size: 1.05rem;
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.75;
+        }
+
+        .feature-number {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(201, 162, 39, 0.15);
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header .icon {
+            width: 50px;
+            height: 50px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Tech Section */
+        .tech {
+            background: var(--primary);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 25px;
+            margin-bottom: 70px;
+        }
+
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 40px 22px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-15px) scale(1.05);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .tech-item:hover::before {
+            opacity: 1;
+        }
+
+        .tech-icon {
+            font-size: 3.8rem;
+        }
+
+        .tech-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .tech-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .tech-column {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .tech-column h3 {
+            color: var(--accent);
+            margin-bottom: 35px;
+            font-size: 1.6rem;
+        }
+
+        .tech-column ul {
+            list-style: none;
+        }
+
+        .tech-column li {
+            padding: 16px 0;
+            padding-left: 38px;
+            position: relative;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tech-column li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-column li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        /* Bot/AI Section */
+        .bot {
+            background: linear-gradient(180deg, #0d1f35 0%, var(--primary) 100%);
+        }
+
+        .bot-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        .bot-features ul {
+            list-style: none;
+        }
+
+        .bot-features li {
+            padding: 20px 0;
+            padding-left: 50px;
+            position: relative;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .bot-features li:last-child {
+            border-bottom: none;
+        }
+
+        .bot-features li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            font-size: 1.4rem;
+        }
+
+        .bot-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bot-card {
+            background: var(--glass);
+            border: 2px solid var(--accent);
+            border-radius: 35px;
+            padding: 70px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 60px var(--accent-glow);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px var(--accent-glow); }
+            50% { box-shadow: 0 0 80px var(--accent-glow), 0 0 120px rgba(201, 162, 39, 0.2); }
+        }
+
+        .bot-emoji {
+            font-size: 8rem;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .bot-card h3 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        /* Attendance Detail Section */
+        .attendance-section {
+            background: var(--primary);
+        }
+
+        .id-card-section {
+            background: linear-gradient(180deg, #0d1f35 0%, var(--primary) 100%);
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 35px;
+        }
+
+        .attendance-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .attendance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .attendance-card h4 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .attendance-card ul {
+            list-style: none;
+        }
+
+        .attendance-card li {
+            padding: 14px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .attendance-card li:last-child {
+            border-bottom: none;
+        }
+
+        .attendance-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Class Info Section */
+        .class-info {
+            background: var(--primary);
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 45px;
+        }
+
+        .info-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            position: relative;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .info-card h4 {
+            margin-bottom: 30px;
+            font-size: 1.6rem;
+        }
+
+        .student-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .student-item:hover {
+            background: rgba(201, 162, 39, 0.1);
+            transform: translateX(5px);
+        }
+
+        .student-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .subject-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .subject-tag {
+            padding: 12px 22px;
+            background: rgba(201, 162, 39, 0.12);
+            border: 1px solid var(--accent);
+            border-radius: 30px;
+            font-size: 1rem;
+            color: var(--accent-light);
+            transition: all 0.3s ease;
+        }
+
+        .subject-tag:hover {
+            background: rgba(201, 162, 39, 0.25);
+            transform: scale(1.05);
+        }
+
+        /* Preview Section */
+        .preview {
+            background: var(--primary);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .preview-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 26px;
+            padding: 28px;
+            transition: all 0.5s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .preview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-18px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.45);
+        }
+
+        .preview-card:hover::before {
+            opacity: 1;
+        }
+
+        .preview-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 22px;
+            color: var(--accent);
+        }
+
+        .preview-screen {
+            height: 210px;
+            background: linear-gradient(145deg, #1a2a40 0%, #0f1c2e 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4.5rem;
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+        }
+
+        .preview-note {
+            text-align: center;
+            margin-top: 55px;
+            font-size: 1.3rem;
+            color: var(--text-muted);
+        }
+
+        /* Thank You Section */
+        .thankyou {
+            background: var(--gradient-1);
+            text-align: center;
+        }
+
+        .thankyou .bg-effect.gold {
+            top: -200px;
+            left: -200px;
+        }
+
+        .thankyou .bg-effect.blue {
+            bottom: -150px;
+            right: -150px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 35px;
+            margin-top: 55px;
+            margin-bottom: 45px;
+        }
+
+        .contact-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 28px;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-2);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .contact-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .contact-card p {
+            font-size: 1.15rem;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .footer-note {
+            margin-top: 55px;
+            font-size: 1.1rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background: var(--gradient-2);
+            z-index: 1000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Floating Nav */
+        .floating-nav {
+            position: fixed;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: var(--accent);
+            transform: scale(1.4);
+            border-color: var(--accent-light);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .nav-dot::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            background: var(--secondary);
+            padding: 6px 14px;
+            border-radius: 6px;
+        }
+
+        .nav-dot:hover::before {
+            opacity: 1;
+        }
+
+        /* Animations on Scroll */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .delay-5 { transition-delay: 0.5s; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            section {
+                padding: 80px 40px;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3.2rem;
+            }
+
+            h2 {
+                font-size: 2.6rem;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            .stats-grid,
+            .tech-grid,
+            .preview-grid,
+            .contact-grid,
+            .info-cards,
+            .attendance-grid,
+            .bot-content,
+            .tech-details {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-nav {
+                display: none;
+            }
+
+            .student-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Floating Navigation -->
+    <div class="floating-nav">
+        <div class="nav-dot active" data-label="Home" data-slide="0"></div>
+        <div class="nav-dot" data-label="Overview" data-slide="1"></div>
+        <div class="nav-dot" data-label="Student Features" data-slide="2"></div>
+        <div class="nav-dot" data-label="Teacher Features" data-slide="3"></div>
+        <div class="nav-dot" data-label="Technology" data-slide="4"></div>
+        <div class="nav-dot" data-label="AI Bot" data-slide="5"></div>
+        <div class="nav-dot" data-label="Attendance" data-slide="6"></div>
+        <div class="nav-dot" data-label="ID Card" data-slide="7"></div>
+        <div class="nav-dot" data-label="Class Info" data-slide="8"></div>
+        <div class="nav-dot" data-label="Preview" data-slide="9"></div>
+        <div class="nav-dot" data-label="Contact" data-slide="10"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="section-0">
+        <div class="bg-effect gold"></div>
+        <div class="bg-effect blue"></div>
+        <div class="section-content">
+            <div class="logo-container">
+                <img src="kmc logo.png" alt="KMC Logo">
+            </div>
+            <p class="subtitle">Introducing</p>
+            <h1>KMC School<br>Management System</h1>
+            <p>A comprehensive web-based portal for students, teachers & parents with AI-powered assistance</p>
+            <div class="hero-badge">🚀 KMC SSP v1.0 • Firebase • Gemini AI</div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section class="overview" id="section-1">
+        <div class="section-content">
+            <h2>Project Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">🏫</div>
+                    <div class="stat-number">2006</div>
+                    <div class="stat-label">School Established</div>
+                </div>
+                <div class="stat-card animate-on-scroll delay-1">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">User Roles</div>
+                </div>
+                <div class="stat-card animate-on-scroll delay-2">
+                    <div class="stat-icon">⚙️</div>
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Student Features</div>
+                </div>
+                <div class="stat-card animate-on-scroll delay-3">
+                    <div class="stat-icon">☁️</div>
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Cloud Based</div>
+                </div>
+                <div class="stat-card animate-on-scroll delay-4">
+                    <div class="stat-icon">🤖</div>
+                    <div class="stat-number">AI</div>
+                    <div class="stat-label">Powered</div>
+                </div>
+            </div>
+            <div class="overview-description animate-on-scroll delay-3">
+                <p>KMC School Management System (KMC SSP) is a comprehensive web-based platform that streamlines academic processes, enhances communication between students, teachers, and parents. The system features real-time attendance tracking with charts, homework management, notices, parent feedback system with reply tracking, class chat with AI bot integration, and Nepal-specific date handling. Built on Firebase cloud infrastructure with Python automation and Gemini AI integration.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Features Section -->
+    <section class="features" id="section-2">
+        <div class="section-content">
+            <h2>Student Portal Features</h2>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">01</span>
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Personal welcome message, today's schedule status, final exam countdown timer, Nepal time integration, and quick navigation to all features.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">02</span>
+                    <div class="feature-icon">📅</div>
+                    <h3>Timetable</h3>
+                    <p>Interactive weekly class schedule showing 8 periods daily (9:30 AM - 4:15 PM), live period tracking with automatic highlighting of current class.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">03</span>
+                    <div class="feature-icon">📚</div>
+                    <h3>Homework</h3>
+                    <p>View all assignments with title, description, due dates, and images. Data synced from Firebase Firestore in real-time.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">04</span>
+                    <div class="feature-icon">📢</div>
+                    <h3>Notices</h3>
+                    <p>Stay updated with school announcements, exam routines (including Nepali dates), competition notices like KMC Hackathon 2026.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">05</span>
+                    <div class="feature-icon">💬</div>
+                    <h3>Class Chat</h3>
+                    <p>Real-time messaging system for class communication. Students can @mention the AI bot to get instant answers to questions.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">06</span>
+                    <div class="feature-icon">🆔</div>
+                    <h3>Digital ID Card</h3>
+                    <p>Downloadable PNG ID card with QR code, student photo, grade, DOB, parent info, address. One-click download.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">07</span>
+                    <div class="feature-icon">👨‍👩‍👧</div>
+                    <h3>Parent Feedback</h3>
+                    <p>Submit complaints, concerns, or suggestions. View reply status from teachers, edit or delete pending submissions.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">08</span>
+                    <div class="feature-icon">🗓️</div>
+                    <h3>Calendar</h3>
+                    <p>Academic calendar displaying events, holidays, exam schedules with Nepal-specific date formatting.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">09</span>
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Profile & Security</h3>
+                    <p>Digital ID card download (PNG), profile management, change password, security sessions with login history tracking.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">10</span>
+                    <div class="feature-icon">🔐</div>
+                    <h3>Secure Login</h3>
+                    <p>Session-based authentication using localStorage. Students select their name to log in.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teacher Features Section -->
+    <section class="features" id="section-3" style="background: var(--primary);">
+        <div class="section-content">
+            <h2>Teacher Portal Features</h2>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">01</span>
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Comprehensive overview showing today's schedule, period status, exam countdown, and latest school notices.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">02</span>
+                    <div class="feature-icon">✅</div>
+                    <h3>Attendance</h3>
+                    <p>Mark daily attendance with Present/Absent/Late options. Features: daily charts, weekly/monthly/yearly analytics, Nepali date converter, absent notification center.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">03</span>
+                    <div class="feature-icon">📝</div>
+                    <h3>Homework Manager</h3>
+                    <p>Create, edit, delete assignments with title, description, due dates. Real-time sync to Firebase for instant student access.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">04</span>
+                    <div class="feature-icon">📅</div>
+                    <h3>Timetable Editor</h3>
+                    <p>Fully editable schedule with 8 periods (plus lunch break). Click any cell to modify, cloud sync to Firebase.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">05</span>
+                    <div class="feature-icon">📢</div>
+                    <h3>Notice Board</h3>
+                    <p>Publish announcements with tags (Exam, Competition, Event). Include exam routines with expandable tables.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">06</span>
+                    <div class="feature-icon">📋</div>
+                    <h3>To-Do / Resources</h3>
+                    <p>Post materials and reminders with optional links. Categories: Reminder and Material. Real-time updates.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <span class="feature-number">07</span>
+                    <div class="feature-icon">💬</div>
+                    <h3>Parent Feedback</h3>
+                    <p>View all submitted feedback, send replies, mark as resolved. Track status: pending/replied/resolved.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-1">
+                    <span class="feature-number">08</span>
+                    <div class="feature-icon">📈</div>
+                    <h3>Analytics</h3>
+                    <p>Chart.js powered visualizations: daily bar charts, weekly comparison, monthly trends, yearly summaries.</p>
+                </div>
+                <div class="feature-card animate-on-scroll delay-2">
+                    <span class="feature-number">09</span>
+                    <div class="feature-icon">🔐</div>
+                    <h3>Secure Login</h3>
+                    <p>Teacher-specific authentication with role-based access control.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="tech" id="section-4">
+        <div class="section-content">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item animate-on-scroll">
+                    <div class="tech-icon">🌐</div>
+                    <div class="tech-name">HTML5</div>
+                </div>
+                <div class="tech-item animate-on-scroll delay-1">
+                    <div class="tech-icon">🎨</div>
+                    <div class="tech-name">CSS3</div>
+                </div>
+                <div class="tech-item animate-on-scroll delay-2">
+                    <div class="tech-icon">⚡</div>
+                    <div class="tech-name">JavaScript</div>
+                </div>
+                <div class="tech-item animate-on-scroll delay-3">
+                    <div class="tech-icon">🔥</div>
+                    <div class="tech-name">Firebase</div>
+                </div>
+                <div class="tech-item animate-on-scroll delay-4">
+                    <div class="tech-icon">🤖</div>
+                    <div class="tech-name">Gemini AI</div>
+                </div>
+                <div class="tech-item animate-on-scroll delay-5">
+                    <div class="tech-icon">🐍</div>
+                    <div class="tech-name">Python</div>
+                </div>
+            </div>
+            <div class="tech-details">
+                <div class="tech-column animate-on-scroll">
+                    <h3>💻 Frontend Development</h3>
+                    <ul>
+                        <li>Modern responsive UI/UX design with CSS Grid & Flexbox</li>
+                        <li>Interactive user interfaces with smooth animations</li>
+                        <li>Cross-browser compatibility (Chrome, Firefox, Safari, Edge)</li>
+                        <li>Mobile-first responsive design approach</li>
+                        <li>Glassmorphism effects and gradient backgrounds</li>
+                        <li>Real-time data binding with Firebase listeners</li>
+                    </ul>
+                </div>
+                <div class="tech-column animate-on-scroll delay-2">
+                    <h3>⚙️ Backend & Infrastructure</h3>
+                    <ul>
+                        <li>Firebase Firestore NoSQL cloud database</li>
+                        <li>Real-time data synchronization across all clients</li>
+                        <li>Python automation bot with Gemini 2.5 AI</li>
+                        <li>Cloud-based data storage and backup</li>
+                        <li>Session management with localStorage</li>
+                        <li>Chart.js for analytics visualization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Bot Section -->
+    <section class="bot" id="section-5">
+        <div class="section-content">
+            <h2>🤖 AI Bot System</h2>
+            <div class="bot-content">
+                <div class="bot-features animate-on-scroll">
+                    <ul>
+                        <li>Real-time message responding using Gemini 2.5 Flash Lite AI</li>
+                        <li>Monitors class chat for @bot mentions continuously</li>
+                        <li>Answers student queries about school, subjects, schedules</li>
+                        <li>Plain text responses only (no markdown formatting)</li>
+                        <li>24/7 operational capability running on Python server</li>
+                        <li>Firebase Firestore integration for message storage</li>
+                        <li>Python-based automation with logging and error handling</li>
+                        <li>Automatic timestamp and sender tracking</li>
+                    </ul>
+                </div>
+                <div class="bot-visual animate-on-scroll delay-2">
+                    <div class="bot-card">
+                        <div class="bot-emoji">🤖</div>
+                        <h3>KMC AI BOT</h3>
+                        <p>Powered by Gemini 2.5 Flash Lite</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Attendance Detail Section -->
+    <section class="attendance-section" id="section-6">
+        <div class="section-content">
+            <h2>📊 Attendance System</h2>
+            <div class="attendance-grid">
+                <div class="attendance-card animate-on-scroll">
+                    <h4>📝 Daily Attendance</h4>
+                    <ul>
+                        <li>Mark Present, Absent, or Late for each student</li>
+                        <li>Quick buttons: Mark All Present/Absent/Late</li>
+                        <li>Real-time save to Firebase Firestore</li>
+                        <li>Daily summary with pie/bar chart</li>
+                        <li>Absent student notification center</li>
+                        <li>View past attendance by date</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll delay-1">
+                    <h4>📈 Analytics & Reports</h4>
+                    <ul>
+                        <li>Daily attendance chart (Present/Absent/Late)</li>
+                        <li>Weekly comparison (last 7 days)</li>
+                        <li>Monthly trends with Nepali date tooltips</li>
+                        <li>Yearly summary by Nepali months</li>
+                        <li>Export to Excel (XLSX format)</li>
+                        <li>Percentage calculations for each category</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll">
+                    <h4>🇳🇵 Nepali Date Support</h4>
+                    <ul>
+                        <li>Automatic Nepali (B.S.) date conversion</li>
+                        <li>12 Nepali months: Baisakh to Chaitra</li>
+                        <li>BS date displayed on attendance form</li>
+                        <li>Chart tooltips show Nepali dates</li>
+                        <li>Yearly analytics in Nepali calendar</li>
+                        <li>Gregorian to Bikram Sambat conversion</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll delay-1">
+                    <h4>☁️ Cloud Features</h4>
+                    <ul>
+                        <li>Automatic sync to Firebase</li>
+                        <li>Real-time updates across devices</li>
+                        <li>Data backup and preservation</li>
+                        <li>Offline-capable with sync on reconnect</li>
+                        <li>Student email integration for notifications</li>
+                        <li>Secure data with Firebase rules</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital ID Card Section -->
+    <section class="attendance-section" id="section-7">
+        <div class="section-content">
+            <h2>🆔 Digital ID Card System</h2>
+            <div class="attendance-grid">
+                <div class="attendance-card animate-on-scroll">
+                    <h4>📥 Download ID Card</h4>
+                    <ul>
+                        <li>One-click PNG download of student ID card</li>
+                        <li>High-resolution image (3x scale) using html2canvas</li>
+                        <li>Auto-named file: KMC_ID_{StudentName}.png</li>
+                        <li>Professional card design with school branding</li>
+                        <li>Includes QR code for verification</li>
+                        <li>Student photo display</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll delay-1">
+                    <h4>🔳 QR Code Generation</h4>
+                    <ul>
+                        <li>Auto-generated unique code per student</li>
+                        <li>Code format: First2Letters + Last2Letters + Grade</li>
+                        <li>Example: Ayaan Ansari, Grade 7 → AYAN7DG</li>
+                        <li>QR code size: 80x80 pixels</li>
+                        <li>Embedded in ID card for scanning</li>
+                        <li>Generated using QRCode.js library</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll">
+                    <h4>🔐 Security & Sessions</h4>
+                    <ul>
+                        <li>Single device enforcement policy</li>
+                        <li>Unique session token per login</li>
+                        <li>Real-time session monitoring via Firebase</li>
+                        <li>Auto-logout when new device logs in</li>
+                        <li>Login history with device & browser info</li>
+                        <li>Kick notification when session expires</li>
+                    </ul>
+                </div>
+                <div class="attendance-card animate-on-scroll delay-1">
+                    <h4>🔑 Password Management</h4>
+                    <ul>
+                        <li>Change password functionality</li>
+                        <li>Minimum 4 character requirement</li>
+                        <li>Confirm password validation</li>
+                        <li>Password stored securely in Firebase</li>
+                        <li>Profile completion tracking (percentage)</li>
+                        <li>Live sync between ID card and profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Class Info Section -->
+    <section class="class-info" id="section-8">
+        <div class="section-content">
+            <h2>Class Information</h2>
+            <div class="info-cards">
+                <div class="info-card animate-on-scroll">
+                    <h4>👥 Students (Class 7 "DG")</h4>
+                    <div class="student-list">
+                        <div class="student-item">
+                            <div class="student-avatar">AA</div>
+                            <span>Ayaan Ansari</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">AT</div>
+                            <span>Abik Thapa</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">NB</div>
+                            <span>Niraj Budhathoki</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">SC</div>
+                            <span>Stulya Chaulagain</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">PB</div>
+                            <span>Prabin Bhandari</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">DN</div>
+                            <span>Dipesh Niraula</span>
+                        </div>
+                        <div class="student-item">
+                            <div class="student-avatar">RN</div>
+                            <span>Rishab Niraula</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-card animate-on-scroll delay-2">
+                    <h4>📚 Subjects Offered</h4>
+                    <div class="subject-tags">
+                        <span class="subject-tag">English I</span>
+                        <span class="subject-tag">English II</span>
+                        <span class="subject-tag">Nepali</span>
+                        <span class="subject-tag">Mathematics</span>
+                        <span class="subject-tag">Science</span>
+                        <span class="subject-tag">Social</span>
+                        <span class="subject-tag">Computer</span>
+                        <span class="subject-tag">Lifeskills</span>
+                        <span class="subject-tag">Newari</span>
+                        <span class="subject-tag">Arts</span>
+                        <span class="subject-tag">Music</span>
+                        <span class="subject-tag">Dance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Preview Section -->
+    <section class="preview" id="section-9">
+        <div class="section-content">
+            <h2>Interface Preview</h2>
+            <div class="preview-grid">
+                <div class="preview-card animate-on-scroll">
+                    <h4>Student Login</h4>
+                    <div class="preview-screen">🎓</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-1">
+                    <h4>Student Dashboard</h4>
+                    <div class="preview-screen">📊</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-2">
+                    <h4>Teacher Dashboard</h4>
+                    <div class="preview-screen">👨‍🏫</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-3">
+                    <h4>Attendance System</h4>
+                    <div class="preview-screen">✅</div>
+                </div>
+                <div class="preview-card animate-on-scroll">
+                    <h4>Homework Manager</h4>
+                    <div class="preview-screen">📝</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-1">
+                    <h4>Timetable</h4>
+                    <div class="preview-screen">📅</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-2">
+                    <h4>Notices</h4>
+                    <div class="preview-screen">📢</div>
+                </div>
+                <div class="preview-card animate-on-scroll delay-3">
+                    <h4>Class Chat + AI</h4>
+                    <div class="preview-screen">💬</div>
+                </div>
+            </div>
+            <p class="preview-note animate-on-scroll delay-3">Modern, intuitive interfaces with golden accent lines • Responsive design for all devices</p>
+        </div>
+    </section>
+
+    <!-- Thank You / Contact Section -->
+    <section class="thankyou" id="section-10">
+        <div class="bg-effect gold"></div>
+        <div class="bg-effect blue"></div>
+        <div class="section-content">
+            <div class="logo-container">
+                <img src="kmc logo.png" alt="KMC Logo" style="width: 180px;">
+            </div>
+            <h1 style="font-size: 4.5rem;">Thank You</h1>
+            <p style="font-size: 1.6rem;">KMC School Management System</p>
+            
+            <div class="contact-grid">
+                <div class="contact-card animate-on-scroll">
+                    <div class="contact-icon">📧</div>
+                    <p>info@kmcschool.edu.np</p>
+                </div>
+                <div class="contact-card animate-on-scroll delay-1">
+                    <div class="contact-icon">📞</div>
+                    <p>01-4792016<br>4792906, 4790361</p>
+                </div>
+                <div class="contact-card animate-on-scroll delay-2">
+                    <div class="contact-icon">📍</div>
+                    <p>KMC School<br>Buddshanagar, Kathmandu</p>
+                </div>
+            </div>
+            
+            <p class="footer-note">© KMC School • Est. 2006 • All Rights Reserved</p>
+        </div>
+    </section>
+
+    <script>
+        // Scroll Progress Bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Floating Navigation
+        const sections = document.querySelectorAll('section');
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        // Update active nav dot on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - sectionHeight / 3) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-slide') === current.replace('section-', '')) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        // Click navigation
+        navDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const slideIndex = dot.getAttribute('data-slide');
+                document.getElementById('section-' + slideIndex).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Smooth scroll for scroll indicator
+        document.querySelector('.scroll-indicator').addEventListener('click', () => {
+            document.getElementById('section-1').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

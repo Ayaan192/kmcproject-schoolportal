@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMC Portal | Class Chat</title>
+    <link rel="stylesheet" href="message.css">
+    <link rel="icon" type="image/png" href="kmc logo.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="school-header">
+        <div class="logo-area">
+            <img src="kmc logo.png" alt="KMC Logo" class="logo-img">
+            <div class="logo-text">KMC SCHOOL</div>
+        </div>
+        <div class="contact-info">
+            <div>info@kmcschool.edu.np</div>
+            <div>01-4792016, 4792906, 4790361, 4797111</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-links-center">
+            <a class="nav-item" href="student-dashboard.html">Dashboard</a>
+            <a class="nav-item" href="student-timetable.html">Timetable</a>
+            <a class="nav-item" href="student-notice.html">Notices</a>
+            <a class="nav-item" href="student-homework.html">Homework</a>
+            <a class="nav-item" href="parents-complain.html">Parents Complain</a>
+            <a class="nav-item active" href="message.html">Chat</a>
+            <a class="nav-item logout" href="student-login.html" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="chat-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-comments"></i> Chat Options</h3>
+                </div>
+                <div class="view-options">
+                    <button class="view-btn active" id="groupChatBtn" onclick="switchView('group')">
+                        <i class="fa-solid fa-users"></i> Class Group
+                    </button>
+                    <button class="view-btn" id="privateChatBtn" onclick="switchView('private')">
+                        <i class="fa-solid fa-user-tie"></i> Teacher
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="header-left">
+                        <h2 id="chatTitle"><i class="fa-solid fa-users"></i> Class Group Chat</h2>
+                    </div>
+                    <div id="statusBadge">Checking Session...</div>
+                </div>
+
+                <div class="chat-messages" id="chatBox">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <!-- Group Chat Input -->
+                <div class="input-area" id="groupInputArea">
+                    <input type="text" id="messageInput" placeholder="Type a message to class..." autocomplete="off">
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+
+                <!-- Private Message Input (Pink) -->
+                <div class="private-input-area" id="privateInputArea">
+                    <i class="fa-solid fa-lock" style="color: var(--kmc-purple); align-self: center;"></i>
+                    <input type="text" id="privateMessageInput" placeholder="Type a private message to teacher..." autocomplete="off">
+                    <button class="send-btn" id="privateSendBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } 
+               from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYgCaY7E0gVqoJj4Izg@s_opbAGJ12E20",
+            authDomain: "kmcproject-techersarea.firebaseapp.com",
+            projectId: "kmcproject-techersarea",
+            storageBucket: "kmcproject-techersarea.firebasestorage.app",
+            messagingSenderId: "997910909059",
+            appId: "1:997910909059:web:0b439a69bc253575de8bb6"
+        };
+
+        // Initialize Firebase
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log("Firebase Connected");
+        } catch (error) {
+            document.getElementById('statusBadge').innerText = "Firebase Error!";
+            console.error(error);
+        }
+
+        const messagesCol = collection(db, "group_messages");
+        const privateMessagesCol = collection(db, "private_messages");
+        const BOT_NAME = "KMC AI BOT";
+
+        // Identity Check
+        const userName = localStorage.getItem('studentName') || "Guest Student";
+        const userClass = localStorage.getItem('studentClass') || "No Class";
+        
+        document.getElementById('statusBadge').innerHTML = `<i class="fa-solid fa-circle-check"></i> ${userName} (${userClass})`;
+
+        // State
+        let currentView = 'group';
+
+        // Switch between group and private chat
+        window.switchView = (view) => {
+            currentView = view;
+            
+            // Update buttons
+            document.getElementById('groupChatBtn').classList.toggle('active', view === 'group');
+            document.getElementById('privateChatBtn').classList.toggle('active', view === 'private');
+            
+            // Show/hide appropriate input
+            document.getElementById('groupInputArea').style.display = view === 'group' ? 'flex' : 'none';
+            document.getElementById('privateInputArea').classList.toggle('active', view === 'private');
+            
+            // Update header and load messages
+            if (view === 'group') {
+                document.getElementById('chatTitle').innerHTML = '<i class="fa-solid fa-users"></i> Class Group Chat';
+                loadGroupMessages();
+            } else {
+                document.getElementById('chatTitle').innerHTML = '<i class="fa-solid fa-user-tie"></i> Private to Teacher';
+                loadPrivateMessages();
+            }
+        };
+
+        // Load group messages
+        function loadGroupMessages() {
+            const q = query(messagesCol, orderBy("createdAt", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    renderGroupMessage(data);
+                });
+                
+                if (chatBox.children.length === 0) {
+                    chatBox.innerHTML = `<div class="empty-state">
+                        <i class="fa-solid fa-comments"></i>
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>`;
+                }
+            });
+        }
+
+        // Load private messages (to/from teacher)
+        function loadPrivateMessages() {
+            const q = query(privateMessagesCol, orderBy("createdAt", "asc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = '';
+                let hasMessages = false;
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Show messages sent to or from "Class Teacher"
+                    if (data.to === "Class Teacher" || data.from === "Class Teacher") {
+                        // Only show if it's from this student
+                        if (data.from === userName || data.from === "Guest Student") {
+                            hasMessages = true;
+                            renderPrivateMessage(data);
+                        }
+                    }
+                });
+                
+                if (!hasMessages) {
+                    chatBox.innerHTML = `<div class="empty-state">
+                        <i class="fa-solid fa-lock"></i>
+                        <p>No private messages to teacher yet</p>
+                        <p style="margin-top:10px; font-size:0.9rem;">Type in the pink box below to send!</p>
+                    </div>`;
+                }
+            });
+        }
+
+        // Render group message
+        function renderGroupMessage(data) {
+            const chatBox = document.getElementById('chatBox');
+            const isMe = data.sender === userName;
+            const isBot = data.sender === BOT_NAME;
+            
+            const time = data.createdAt ? data.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
+            
+            const div = document.createElement('div');
+            div.className = `msg ${isMe ? 'sent' : 'received'} ${isBot ? 'bot-msg' : ''}`;
+            
+            div.innerHTML = `
+                <span class="msg-info">${data.sender} <span class="msg-class">${data.class || ''}</span></span>
+                <div class="msg-text">${data.text}</div>
+                <span class="msg-time">${time}</span>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Render private message
+        function renderPrivateMessage(data) {
+            const chatBox = document.getElementById('chatBox');
+            const isMe = data.from === userName || data.from === "Guest Student";
+            
+            const time = data.createdAt ? data.createdAt.toDate().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "...";
+            
+            const div = document.createElement('div');
+            div.className = `msg private-msg ${isMe ? 'sent' : 'received'}`;
+            
+            div.innerHTML = `
+                <span class="msg-info">
+                    <i class="fa-solid fa-lock"></i> 
+                    ${isMe ? 'To: Class Teacher' : 'From: Class Teacher'}
+                </span>
+                <div class="msg-text">${data.text}</div>
+                <span class="msg-time">${time}</span>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Send group message
+        async function sendGroupMessage() {
+            const input = document.getElementById('messageInput');
+            const val = input.value.trim();
+            
+            if (val !== "") {
+                try {
+                    await addDoc(messagesCol, {
+                        text: val,
+                        sender: userName,
+                        class: userClass,
+                        createdAt: serverTimestamp()
+                    });
+                    input.value = "";
+                } catch (e) { 
+                    console.error("Error sending:", e);
+                    alert("Error sending: " + e.message); 
+                }
+            }
+        }
+
+        // Send private message
+        async function sendPrivateMessage() {
+            const input = document.getElementById('privateMessageInput');
+            const val = input.value.trim();
+            
+            if (val !== "") {
+                try {
+                    await addDoc(privateMessagesCol, {
+                        text: val,
+                        from: userName,
+                        to: "Class Teacher",
+                        createdAt: serverTimestamp()
+                    });
+                    input.value = "";
+                } catch (e) { 
+                    console.error("Error sending private:", e);
+                    alert("Error sending: " + e.message); 
+                }
+            } else {
+                alert("Please enter a message");
+            }
+        }
+
+        // Event listeners
+        document.getElementById('sendBtn').addEventListener('click', sendGroupMessage);
+        document.getElementById('privateSendBtn').addEventListener('click', sendPrivateMessage);
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendGroupMessage();
+        });
+
+        document.getElementById('privateMessageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendPrivateMessage();
+        });
+
+        // Initial load
+        document.getElementById('groupInputArea').style.display = 'flex';
+        document.getElementById('privateInputArea').classList.remove('active');
+        loadGroupMessages();
+
+        // Logout
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.clear();
+            window.location.href = 'student-login.html';
+        };
+    </script>
+</body>
+</html>
